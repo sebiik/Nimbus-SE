@@ -18,10 +18,6 @@ AudioSynthWaveform       oscThreeC;    //xy=414.5,881
 AudioSynthWaveform       oscThreeD;    //xy=392.5,1080
 
 AudioSynthNoiseWhite     noiseWhite;    //xy=455.5,411
-// AudioSynthNoiseWhite     noiseVoiceA;    //xy=455.5,411
-// AudioSynthNoiseWhite     noiseVoiceB;    //xy=393.5,694
-// AudioSynthNoiseWhite     noiseVoiceC;    //xy=411.5,917
-// AudioSynthNoiseWhite     noiseVoiceD;    //xy=392.5,1114
 
 AudioMixer4              voiceMixerA;    //xy=635.5,364
 AudioMixer4              voiceMixerB;    //xy=567.5,655
@@ -38,13 +34,8 @@ AudioEffectMultiply      multiplyB;      //xy=726.5,627
 AudioEffectMultiply      multiplyC;      //xy=738.5,848
 AudioEffectMultiply      multiplyD;      //xy=738.5,1035
 
-AudioSynthWaveform       LFO1;           //xy=757.5,770
-
-AudioSynthWaveformSine   LFO2;           //xy=1050.5,232
-AudioSynthWaveformDc     lfo2Amt;        //xy=1050.5,185
-
-AudioMixer4              lfoMixer;       //xy=1207.5,235
-AudioAnalyzePeak         lfoPeak;        //xy=1364.5,229
+AudioSynthWaveform       lfo1;           //xy=757.5,770
+AudioSynthWaveform       lfo2;           //xy=1050.5,232
 
 AudioSynthWaveformDc     filterEnvA;     //xy=854.5,445
 AudioSynthWaveformDc     filterEnvB;     //xy=849.5,675
@@ -66,7 +57,7 @@ AudioAnalyzePeak         peakB;          //xy=1205.5,557
 AudioAnalyzePeak         peakC;          //xy=1183.5,775
 AudioAnalyzePeak         peakD;          //xy=1183.5,1011
 
-AudioMixer4              finalMixer;     //xy=1388.5,692
+AudioMixer4              polyMixer;     //xy=1388.5,692
 AudioAnalyzePeak         finalPeak;      //xy=1586.5,779
 
 AudioEffectDelayExternal delay1;
@@ -79,65 +70,65 @@ AudioFilterBiquad         reverbInputFilter;        //xy=1172.5,434
 AudioMixer4               reverbMixerL;     //xy=1388.5,692
 AudioMixer4               reverbMixerR;     //xy=1388.5,692
 
-AudioConnection          patchCord1(oscOneB, 0, voiceMixerB, 0);
-AudioConnection          patchCord2(oscTwoB, 0, voiceMixerB, 1);
-AudioConnection          patchCord3(oscTwoD, 0, voiceMixerD, 1);
-AudioConnection          patchCord4(oscOneD, 0, voiceMixerD, 0);
-AudioConnection          patchCord5(oscThreeB, 0, voiceMixerB, 2);
-AudioConnection          patchCord6(noiseWhite, 0, voiceMixerB, 3);
-AudioConnection          patchCord7(oscThreeD, 0, voiceMixerD, 2);
-AudioConnection          patchCord8(noiseWhite, 0, voiceMixerD, 3);
-AudioConnection          patchCord9(oscTwoC, 0, voiceMixerC, 1);
-AudioConnection          patchCord10(oscOneC, 0, voiceMixerC, 0);
-AudioConnection          patchCord11(noiseWhite, 0, voiceMixerC, 3);
-AudioConnection          patchCord12(oscThreeC, 0, voiceMixerC, 2);
 AudioConnection          patchCord13(oscOneA, 0, voiceMixerA, 0);
+AudioConnection          patchCord1(oscOneB, 0, voiceMixerB, 0);
+AudioConnection          patchCord10(oscOneC, 0, voiceMixerC, 0);
+AudioConnection          patchCord4(oscOneD, 0, voiceMixerD, 0);
 AudioConnection          patchCord14(oscTwoA, 0, voiceMixerA, 1);
-AudioConnection          patchCord15(noiseWhite, 0, voiceMixerA, 3);
+AudioConnection          patchCord2(oscTwoB, 0, voiceMixerB, 1);
+AudioConnection          patchCord9(oscTwoC, 0, voiceMixerC, 1);
+AudioConnection          patchCord3(oscTwoD, 0, voiceMixerD, 1);
 AudioConnection          patchCord16(oscThreeA, 0, voiceMixerA, 2);
+AudioConnection          patchCord5(oscThreeB, 0, voiceMixerB, 2);
+AudioConnection          patchCord12(oscThreeC, 0, voiceMixerC, 2);
+AudioConnection          patchCord7(oscThreeD, 0, voiceMixerD, 2);
+AudioConnection          patchCord15(noiseWhite, 0, voiceMixerA, 3);
+AudioConnection          patchCord6(noiseWhite, 0, voiceMixerB, 3);
+AudioConnection          patchCord11(noiseWhite, 0, voiceMixerC, 3);
+AudioConnection          patchCord8(noiseWhite, 0, voiceMixerD, 3);
+
+AudioConnection          patchCord23(voiceMixerA, 0, multiplyA, 1);
 AudioConnection          patchCord17(voiceMixerB, 0, multiplyB, 1);
-AudioConnection          patchCord18(ampEnvB, 0, multiplyB, 0);
-AudioConnection          patchCord19(ampEnvC, 0, multiplyC, 0);
 AudioConnection          patchCord20(voiceMixerC, 0, multiplyC, 1);
 AudioConnection          patchCord21(voiceMixerD, 0, multiplyD, 1);
-AudioConnection          patchCord22(ampEnvD, 0, multiplyD, 0);
-AudioConnection          patchCord23(voiceMixerA, 0, multiplyA, 1);
+
 AudioConnection          patchCord24(ampEnvA, 0, multiplyA, 0);
+AudioConnection          patchCord18(ampEnvB, 0, multiplyB, 0);
+AudioConnection          patchCord19(ampEnvC, 0, multiplyC, 0);
+AudioConnection          patchCord22(ampEnvD, 0, multiplyD, 0);
+
+AudioConnection          patchCord32(multiplyA, 0, filterA, 0);
 AudioConnection          patchCord25(multiplyB, 0, filterB, 0);
 AudioConnection          patchCord26(multiplyC, 0, filterC, 0);
 AudioConnection          patchCord27(multiplyD, 0, filterD, 0);
-AudioConnection          patchCord28(LFO1, 0, filterModMixerA, 1);
-AudioConnection          patchCord29(LFO1, 0, filterModMixerB, 1);
-AudioConnection          patchCord30(LFO1, 0, filterModMixerC, 1);
-AudioConnection          patchCord31(LFO1, 0, filterModMixerD, 1);
-AudioConnection          patchCord32(multiplyA, 0, filterA, 0);
-AudioConnection          patchCord33(filterEnvD, 0, filterModMixerD, 0);
-AudioConnection          patchCord34(filterEnvB, 0, filterModMixerB, 0);
 AudioConnection          patchCord35(filterEnvA, 0, filterModMixerA, 0);
+AudioConnection          patchCord34(filterEnvB, 0, filterModMixerB, 0);
 AudioConnection          patchCord36(filterEnvC, 0, filterModMixerC, 0);
-AudioConnection          patchCord37(filterModMixerD, 0, filterD, 1);
+AudioConnection          patchCord33(filterEnvD, 0, filterModMixerD, 0);
+AudioConnection          patchCord28(lfo1, 0, filterModMixerA, 1);
+AudioConnection          patchCord29(lfo1, 0, filterModMixerB, 1);
+AudioConnection          patchCord30(lfo1, 0, filterModMixerC, 1);
+AudioConnection          patchCord31(lfo1, 0, filterModMixerD, 1);
+AudioConnection          patchCord37(filterModMixerA, 0, filterA, 1);
 AudioConnection          patchCord38(filterModMixerB, 0, filterB, 1);
-AudioConnection          patchCord39(filterModMixerA, 0, filterA, 1);
-AudioConnection          patchCord40(filterModMixerC, 0, filterC, 1);
-AudioConnection          patchCord41(lfo2Amt, 0, lfoMixer, 0);
-AudioConnection          patchCord42(LFO2, 0, lfoMixer, 1);
-AudioConnection          patchCord43(filterA, 0, finalMixer, 0);
+AudioConnection          patchCord39(filterModMixerC, 0, filterC, 1);
+AudioConnection          patchCord40(filterModMixerD, 0, filterD, 1);
+AudioConnection          patchCord43(filterA, 0, polyMixer, 0);
+AudioConnection          patchCord47(filterB, 0, polyMixer, 1);
+AudioConnection          patchCord49(filterC, 0, polyMixer, 2);
+AudioConnection          patchCord45(filterD, 0, polyMixer, 3);
 AudioConnection          patchCord44(filterA, 0, peakA, 0);
-AudioConnection          patchCord45(filterD, 0, finalMixer, 3);
-AudioConnection          patchCord46(filterD, 0, peakD, 0);
-AudioConnection          patchCord47(filterB, 0, finalMixer, 1);
 AudioConnection          patchCord48(filterB, 0, peakB, 0);
-AudioConnection          patchCord49(filterC, 0, finalMixer, 2);
 AudioConnection          patchCord50(filterC, 0, peakC, 0);
-AudioConnection          patchCord51(lfoMixer, lfoPeak);
-AudioConnection          patchCord52(finalMixer, finalPeak);
+AudioConnection          patchCord46(filterD, 0, peakD, 0);
+AudioConnection          patchCord52(polyMixer, finalPeak);
 
-AudioConnection          patchCord53(finalMixer, 0, delayFbMixer, 0);
+AudioConnection          patchCord53(polyMixer, 0, delayFbMixer, 0);
 AudioConnection          patchCord54(delayFbMixer, 0, delayFilter1, 0);
 AudioConnection          patchCord55(delayFilter1, 0, delay1, 0);
 AudioConnection          patchCord56(delay1, 0, delayFbMixer, 1);
 
-AudioConnection          patchCord57(finalMixer, 0, delayMixer, 0);
+AudioConnection          patchCord57(polyMixer, 0, delayMixer, 0);
 AudioConnection          patchCord58(delay1, 0, delayMixer, 1);
 
 AudioConnection          patchCord59(delayMixer, 0, reverbInputFilter, 0);

@@ -54,7 +54,7 @@ AudioAnalyzePeak         peakA;          //xy=1187.5,365
 AudioAnalyzePeak         peakB;          //xy=1205.5,557
 AudioMixer4              LfoMixer;       //xy=1207.5,235
 AudioAnalyzePeak         lfoPeak;        //xy=1364.5,229
-AudioMixer4              finalMixer;     //xy=1388.5,692
+AudioMixer4              polyMixer;     //xy=1388.5,692
 AudioAnalyzePeak         finalPeak;      //xy=1586.5,779
 AudioOutputI2S           i2s1;           //xy=1592.5,691
 AudioConnection          patchCord1(voiceOneB, 0, voiceMixerB, 0);
@@ -99,18 +99,18 @@ AudioConnection          patchCord39(filterModMixerA, 0, filterA, 1);
 AudioConnection          patchCord40(filterModMixerC, 0, filterC, 1);
 AudioConnection          patchCord41(lfo2Amt, 0, LfoMixer, 0);
 AudioConnection          patchCord42(LFO2, 0, LfoMixer, 1);
-AudioConnection          patchCord43(filterA, 0, finalMixer, 0);
+AudioConnection          patchCord43(filterA, 0, polyMixer, 0);
 AudioConnection          patchCord44(filterA, 0, peakA, 0);
-AudioConnection          patchCord45(filterD, 0, finalMixer, 3);
+AudioConnection          patchCord45(filterD, 0, polyMixer, 3);
 AudioConnection          patchCord46(filterD, 0, peakD, 0);
-AudioConnection          patchCord47(filterB, 0, finalMixer, 1);
+AudioConnection          patchCord47(filterB, 0, polyMixer, 1);
 AudioConnection          patchCord48(filterB, 0, peakB, 0);
-AudioConnection          patchCord49(filterC, 0, finalMixer, 2);
+AudioConnection          patchCord49(filterC, 0, polyMixer, 2);
 AudioConnection          patchCord50(filterC, 0, peakC, 0);
 AudioConnection          patchCord51(LfoMixer, lfoPeak);
-AudioConnection          patchCord52(finalMixer, 0, i2s1, 0);
-AudioConnection          patchCord53(finalMixer, 0, i2s1, 1);
-AudioConnection          patchCord54(finalMixer, finalPeak);
+AudioConnection          patchCord52(polyMixer, 0, i2s1, 0);
+AudioConnection          patchCord53(polyMixer, 0, i2s1, 1);
+AudioConnection          patchCord54(polyMixer, finalPeak);
 AudioControlSGTL5000     sgtl5000_1;     //xy=1371.5,273
 // GUItool: end automatically generated code
 
@@ -388,11 +388,11 @@ void setup() {
   LFO2.amplitude(1);
   LFO2.frequency(1);
 
-  //finalMixer
-  finalMixer.gain(0,.25);
-  finalMixer.gain(1,.25);
-  finalMixer.gain(2,.25);
-  finalMixer.gain(3,.25);
+  //polyMixer
+  polyMixer.gain(0,.25);
+  polyMixer.gain(1,.25);
+  polyMixer.gain(2,.25);
+  polyMixer.gain(3,.25);
 
   //Voice 1
   voiceOneA.amplitude(.25);

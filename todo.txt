@@ -1,4 +1,2 @@
-- Neopixel pin free for something else?
-- ENV sustain, release
+- ADSR ENV
 - Shift button (+ pot movement)?
-- Add delay, freeverb

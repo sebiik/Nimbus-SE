@@ -48,7 +48,6 @@ void setup() {
   MIDI.setHandleNoteOff(OnNoteOff);
   MIDI.setHandleControlChange(OnControlChange);
   MIDI.setHandleProgramChange(OnProgramChange);
-
   #ifdef MIDI_DEVICE_USB
   usbMIDI.begin();
   usbMIDI.setHandleNoteOn(OnNoteOn);
@@ -80,57 +79,47 @@ void setup() {
   /* Initialize ADC */
   initADC();
 
-  // Final mixer
-  finalMixer.gain(0,.25);
-  finalMixer.gain(1,.25);
-  finalMixer.gain(2,.25);
-  finalMixer.gain(3,.25);
-  // Osc 1
+  /* Initialize static values */
+  for (uint8_t g=0; g<4; g++) { polyMixer.gain(g,0.25); }
+  // polyMixer.gain(0,.25);
+  // polyMixer.gain(1,.25);
+  // polyMixer.gain(2,.25);
+  // polyMixer.gain(3,.25);
   oscOneA.amplitude(.25);
   oscOneB.amplitude(.25);
   oscOneC.amplitude(.25);
   oscOneD.amplitude(.25);
-  // Osc 2
   oscTwoA.amplitude(.25);
   oscTwoB.amplitude(.25);
   oscTwoC.amplitude(.25);
   oscTwoD.amplitude(.25);
-  // Osc 3
   oscThreeA.amplitude(.25);
   oscThreeB.amplitude(.25);
   oscThreeC.amplitude(.25);
   oscThreeD.amplitude(.25);
-
-  LFO1.begin(.7,.5,WAVEFORM_SAWTOOTH_REVERSE);
-  lfoMixer.gain(0,.5);
-  lfoMixer.gain(1,.008);
-  lfo2Amt.amplitude(1);
-  LFO2.amplitude(1);
-  LFO2.frequency(1);
-  // Filter
   filterA.octaveControl(2.5);
   filterB.octaveControl(2.5);
   filterC.octaveControl(2.5);
   filterD.octaveControl(2.5);
-
-  /* Delay parameters */
-  delayFilter1.setHighpass(0, 80, 0.7); // stage(0-3), frequency, resonance
-  delayFilter1.setLowpass(1, 3000, 1.0); // stage(0-3), frequency, resonance
-  /* Delay dry mix */
+  delayFilter1.setHighpass(0, 80, 0.7);
   delayMixer.gain(0, 1);
-  /* Delay wet mix */
-  delayMixer.gain(1, 0.5);
   delayFbMixer.gain(0, 1.0);
-  /* Delay feedback */
   delayFbMixer.gain(1, 0.85);
-
-  /* Initialize reverb */
-  reverbInputFilter.setHighpass(0, 100, 1.0); // stage(0-3), frequency, resonance
-  freeverbs1.roomsize(0.98);
-  freeverbs1.damping(0.25);
-  /* Reverb dry mix */
   reverbMixerL.gain(0, 1);
   reverbMixerR.gain(0, 1);
+
+  lfo1.begin(.7,.5,WAVEFORM_SINE);
+  lfo1.amplitude(1);
+  lfo1.frequency(1);
+
+  lfo1.begin(.7,.5,WAVEFORM_SINE);
+  lfo1.amplitude(1);
+  lfo1.frequency(1);
+
+  /* Test reverb */
+  reverbInputFilter.setHighpass(0, 80, 0.7); // stage(0-3), frequency, resonance
+  freeverbs1.roomsize(0.98);
+  freeverbs1.damping(0.25);
   /* Reverb wet mix */
   reverbMixerL.gain(1, 0.25);
   reverbMixerR.gain(1, 0.25);
@@ -183,13 +172,13 @@ void setup() {
   //   }
   //   switch (i) {
   //     case 0:
-  //     setVoiceOneShape(digitalRead(btnSwPins[i]));
+  //     setOsc1Shape(digitalRead(btnSwPins[i]));
   //     break;
   //     case 1:
-  //     setVoiceTwoShape(digitalRead(btnSwPins[i]));
+  //     setOsc2Shape(digitalRead(btnSwPins[i]));
   //     break;
   //     case 2:
-  //     setVoiceThreeShape(digitalRead(btnSwPins[i]));
+  //     setOsc3Shape(digitalRead(btnSwPins[i]));
   //     break;
   //     case 3:
   //     setLfoShape(digitalRead(btnSwPins[i]));
@@ -347,9 +336,11 @@ void loop() {
     }
   }
 
-  /* Update LFO values */
-  LFO1.frequency(lfo1Freq);
-  LFO1.amplitude(lfo1Amt);
+  /* Update lfo values */
+  lfo1.frequency(lfo1Freq);
+  lfo1.amplitude(lfo1Amt);
+  lfo2.frequency(lfo2Freq);
+  lfo2.amplitude(lfo2Amt);
 
   /* Update filter values */
   filterA.frequency(filterFreq);
@@ -360,11 +351,6 @@ void loop() {
   filterB.resonance(filterRes);
   filterC.resonance(filterRes);
   filterD.resonance(filterRes);
-
-  /* Update LFO2 values */
-  if(lfoPeak.available()) {
-    lfoPitchMod = lfoPeak.read() + .5;
-  }
 
   //voiceA peak analyzer
   if (peakA.available()) {
@@ -441,6 +427,7 @@ void updateCC(void) {
     }
   }
 }
+
 
 /* MIDI functions */
 void OnNoteOn(uint8_t channel, uint8_t note, uint8_t velocity) {
@@ -591,7 +578,7 @@ void savePreset(uint8_t number) {
 
 
 /* Voice edit functions */
-void setVoiceOneShape(uint8_t wave) {
+void setOsc1Shape(uint8_t wave) {
   wave %= NUM_WAVEFORMS;
   switch(wave) {
     case 0:
@@ -629,7 +616,7 @@ void setVoiceOneShape(uint8_t wave) {
   }
 }
 
-void setVoiceTwoShape(uint8_t wave) {
+void setOsc2Shape(uint8_t wave) {
   wave %= NUM_WAVEFORMS;
   switch(wave) {
     case 0:
@@ -666,7 +653,7 @@ void setVoiceTwoShape(uint8_t wave) {
   }
 }
 
-void setVoiceThreeShape(uint8_t wave) {
+void setOsc3Shape(uint8_t wave) {
   wave %= NUM_WAVEFORMS;
   switch(wave) {
 
@@ -709,19 +696,19 @@ void setLfoShape(uint8_t wave) {
   switch(wave) {
 
     case 0:
-      LFO1.begin(WAVEFORM_SINE);
+      lfo1.begin(WAVEFORM_SINE);
       break;
 
     case 1:
-      LFO1.begin(WAVEFORM_SAWTOOTH_REVERSE);
+      lfo1.begin(WAVEFORM_SAWTOOTH_REVERSE);
       break;
 
     case 2:
-      LFO1.begin(WAVEFORM_SQUARE);
+      lfo1.begin(WAVEFORM_SQUARE);
       break;
 
     case 3:
-      LFO1.begin(WAVEFORM_SAMPLE_HOLD);
+      lfo1.begin(WAVEFORM_SAMPLE_HOLD);
       break;
   }
 }
@@ -755,7 +742,7 @@ void updateEncoder() {
 void setSynthParam(uint8_t number, uint8_t value) {
   float valueNorm = value * DIV127;
   switch (number) {
-    case 11 ... 14: {
+    case 11 ... 14: { // OSC1...3 amp
       float gain = valueNorm*0.5;
       voiceMixerA.gain(number-11, gain);
       voiceMixerB.gain(number-11, gain);
@@ -765,86 +752,61 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case 15:
-      LFO2.frequency(sq(valueNorm)*20);
+      setOsc1Shape(value);
       break;
 
     case 16:
-      LFO2.amplitude(valueNorm/256);
+      setOsc2Shape(value);
       break;
 
     case 17:
-      masterDetune = sq(valueNorm);
-      plusDetune =  1 + masterDetune * 0.5;
-      minusDetune = 1 - masterDetune * 0.25;
-      break;
+      setOsc3Shape(value);
+    break;
 
     case 18:
-      lfo1Freq = sq(valueNorm)*20;
-      break;
-
-    case 19:
-      lfo1Amt = valueNorm/256;
-      break;
-
-    case 20:
-      attackTime = sq(valueNorm) * 10000 +1;
-      break;
-
-    case 21:
-      releaseTime = sq(valueNorm) * 10000 + 1;
-      break;
-
-    case 22:
-      filterEnvAttackTime = sq(valueNorm) * 10000 + 1;
-      break;
-
-    case 23:
-      filterEnvReleaseTime = sq(valueNorm) * 10000 + 1;
-      break;
-
-    case 24:
-      filterFreq = 40 + sq(valueNorm) * 16000;
-      break;
-
-    case 25:
-      filterRes = 0.7 + valueNorm * 4.3;
-      break;
-
-    case 26:
-      octaveKey = valueNorm * 4;
-      octaveKey = int(constrain(octaveKey, 0, 3));
-      break;
-
-    case 27:
-      setVoiceOneShape(value);
-      break;
-
-    case 28:
-      setVoiceTwoShape(value);
-      break;
-
-    case 29:
-      setVoiceThreeShape(value);
-      break;
-
-    case 30:
       setLfoShape(value);
-      break;
+    break;
 
-    case 31:
-      delay1.delay(0, sq(valueNorm) * 999 + 1);
-      break;
+      lfo1Freq = sq(valueNorm)*20; // lfo1 freq
 
-    case 32:
-      delayFbMixer.gain(1, valueNorm * 0.862);
-      break;
+      lfo1Amt = valueNorm/256; // lfo1 amount
 
-    case 33:
-      delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // stage(0-3), frequency, resonance
-      break;
+      lfo2Freq = sq(valueNorm)*20; // lfo2 freq
 
-    case 34:
-      delayMixer.gain(1, valueNorm);
-      break;
+      lfo2Amt = valueNorm/256; // lfo2 amount
+
+      masterDetune = sq(valueNorm); // Detune
+      plusDetune =  1 + masterDetune * 0.5;
+      minusDetune = 1 - masterDetune * 0.25;
+
+      octaveKey = valueNorm * 4; // Octave
+      octaveKey = int(constrain(octaveKey, 0, 3));
+
+      filterFreq = 40 + sq(valueNorm) * 16000; // Filter cutoff freq
+
+      filterRes = 0.7 + valueNorm * 4.3; // Filter resonance
+
+      attackTime = sq(valueNorm) * 10000 +1;
+
+      releaseTime = sq(valueNorm) * 10000 + 1;
+
+      filterEnvAttackTime = sq(valueNorm) * 10000 + 1;
+
+      filterEnvReleaseTime = sq(valueNorm) * 10000 + 1;
+
+      delay1.delay(0, sq(valueNorm) * 999 + 1); // Delay time
+
+      delayFbMixer.gain(1, valueNorm * 0.862); // Delay feedback
+
+      delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
+
+      delayMixer.gain(1, valueNorm); // Delay mix
+
+      freeverbs1.roomsize(valueNorm); // Reverb size
+
+      freeverbs1.damping(valueNorm); // Reverb damping
+
+      reverbMixerL.gain(1, valueNorm); // Reverb mix
+      reverbMixerR.gain(1, valueNorm);
   }
 }
