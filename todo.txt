@@ -1,0 +1,4 @@
+- Neopixel pin free for something else?
+- ENV sustain, release
+- Shift button (+ pot movement)?
+- Add delay, freeverb
