@@ -77,14 +77,13 @@ void setup() {
   lcd.write("SD card found.");
 
   /* Initialize ADC */
-  initADC();
+  // initADC();
 
   /* Initialize static values */
-  for (uint8_t g=0; g<4; g++) { polyMixer.gain(g,0.25); }
-  // polyMixer.gain(0,.25);
-  // polyMixer.gain(1,.25);
-  // polyMixer.gain(2,.25);
-  // polyMixer.gain(3,.25);
+  polyMixer.gain(0,.25);
+  polyMixer.gain(1,.25);
+  polyMixer.gain(2,.25);
+  polyMixer.gain(3,.25);
   oscOneA.amplitude(.25);
   oscOneB.amplitude(.25);
   oscOneC.amplitude(.25);
@@ -97,58 +96,70 @@ void setup() {
   oscThreeB.amplitude(.25);
   oscThreeC.amplitude(.25);
   oscThreeD.amplitude(.25);
+  noiseWhite.amplitude(.125);
   filterA.octaveControl(2.5);
   filterB.octaveControl(2.5);
   filterC.octaveControl(2.5);
   filterD.octaveControl(2.5);
   delayFilter1.setHighpass(0, 80, 0.7);
   delayMixer.gain(0, 1);
-  delayFbMixer.gain(0, 1.0);
-  delayFbMixer.gain(1, 0.85);
+  delayFbMixer.gain(0, 1);
   reverbMixerL.gain(0, 1);
   reverbMixerR.gain(0, 1);
-
-  lfo1.begin(.7,.5,WAVEFORM_SINE);
-  lfo1.amplitude(1);
-  lfo1.frequency(1);
-
-  lfo1.begin(.7,.5,WAVEFORM_SINE);
-  lfo1.amplitude(1);
-  lfo1.frequency(1);
-
-  /* Test reverb */
   reverbInputFilter.setHighpass(0, 80, 0.7); // stage(0-3), frequency, resonance
-  freeverbs1.roomsize(0.98);
-  freeverbs1.damping(0.25);
-  /* Reverb wet mix */
-  reverbMixerL.gain(1, 0.25);
-  reverbMixerR.gain(1, 0.25);
 
-  //
+  lfo1.begin(.7,.5,WAVEFORM_SINE);
+  // lfo1.amplitude(1);
+  // lfo1.frequency(1);
+
+  lfo2.begin(.7,.5,WAVEFORM_SINE);
+  // lfo2.amplitude(1);
+  // lfo2.frequency(1);
+
   setSynthParam(11,127);
-  setSynthParam(12,9);
+  setSynthParam(12,63);
   setSynthParam(13,0);
-  setSynthParam(14,1);
+  setSynthParam(14,63);
+
   setSynthParam(15,0);
-  setSynthParam(16,63);
+  setSynthParam(16,0);
   setSynthParam(17,0);
-  setSynthParam(18,63);
-  setSynthParam(19,127);
-  setSynthParam(20,1);
-  setSynthParam(21,1);
-  setSynthParam(22,1);
-  setSynthParam(23,1);
-  setSynthParam(24,127);
+  setSynthParam(18,0);
+
+  setSynthParam(19,0);
+  setSynthParam(20,0);
+  setSynthParam(21,31);
+  setSynthParam(22,31);
+
+  setSynthParam(23,0);
+  setSynthParam(24,63);
   setSynthParam(25,63);
-  setSynthParam(26,0);
-  setSynthParam(27,0);
+  setSynthParam(26,63);
+
+  setSynthParam(27,63);
   setSynthParam(28,0);
   setSynthParam(29,0);
   setSynthParam(30,0);
-  setSynthParam(31,0);
-  setSynthParam(32,0);
-  setSynthParam(33,0);
+
+  setSynthParam(31,32);
+  setSynthParam(32,127);
+  setSynthParam(33,32);
   setSynthParam(34,0);
+
+  setSynthParam(35,32);
+  setSynthParam(36,127);
+  setSynthParam(37,32);
+  setSynthParam(38,0);
+
+  setSynthParam(39,63);
+  setSynthParam(40,63);
+  setSynthParam(41,63);
+  setSynthParam(42,63);
+
+  setSynthParam(43,0);
+  setSynthParam(44,0);
+  setSynthParam(45,0);
+  setSynthParam(46,0);
 
   /* Initialize encoder */
   // pinMode(ENCODER_PIN1, INPUT);
@@ -219,12 +230,13 @@ void loop() {
 
   /* Read encoder */ // TODO: currently no function
   if (abs(scaledEncVal - prevScaledEncVal) > 0) {
+    // ...
     prevScaledEncVal = scaledEncVal;
   }
 
   /* Read pot values */
   if (ADCcounter % 16 == 0) {
-    readADC();
+    // readADC();
     updateCC();
   }
   ADCcounter++;
@@ -245,8 +257,7 @@ void loop() {
               menuCount++;
               menuCount %= 4;
 
-              if (menuCount == 4) {
-              }
+              if (menuCount == 4) { }
               else { }
             }
           break;
@@ -268,16 +279,16 @@ void loop() {
 
       case 0: {
         //VoiceA
-          oscOneA.frequency(voiceFreqs[i] * octave[octaveKey] * lfoPitchMod);
-          oscTwoA.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune * lfoPitchMod);
-          oscThreeA.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune * lfoPitchMod);
+          oscOneA.frequency(voiceFreqs[i] * octave[octaveKey]);
+          oscTwoA.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
+          oscThreeA.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
           //Env
           if(voices[i]) {
-            ampEnvA.amplitude(voiceVels[i], attackTime);
+            ampEnvA.amplitude(voiceVels[i], ampAttackTime);
             filterEnvA.amplitude(voiceVels[i],filterEnvAttackTime);
           }
           else {
-            ampEnvA.amplitude(0, releaseTime);
+            ampEnvA.amplitude(0, ampReleaseTime);
             filterEnvA.amplitude(0,filterEnvReleaseTime);
           }
         break;
@@ -285,16 +296,16 @@ void loop() {
 
       case 1: {
         //VoiceB
-          oscOneB.frequency(voiceFreqs[i] * octave[octaveKey] * lfoPitchMod);
-          oscTwoB.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune * lfoPitchMod);
-          oscThreeB.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune * lfoPitchMod);
+          oscOneB.frequency(voiceFreqs[i] * octave[octaveKey]);
+          oscTwoB.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
+          oscThreeB.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
           //Env
           if(voices[i]) {
-            ampEnvB.amplitude(voiceVels[i], attackTime);
+            ampEnvB.amplitude(voiceVels[i], ampAttackTime);
             filterEnvB.amplitude(voiceVels[i],filterEnvAttackTime);
           }
           else {
-            ampEnvB.amplitude(0, releaseTime);
+            ampEnvB.amplitude(0, ampReleaseTime);
             filterEnvB.amplitude(0,filterEnvReleaseTime);
           }
         break;
@@ -302,16 +313,16 @@ void loop() {
 
       case 2: {
         //VoiceC
-          oscOneC.frequency(voiceFreqs[i] * octave[octaveKey] * lfoPitchMod);
-          oscTwoC.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune * lfoPitchMod);
-          oscThreeC.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune * lfoPitchMod);
+          oscOneC.frequency(voiceFreqs[i] * octave[octaveKey]);
+          oscTwoC.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
+          oscThreeC.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
           //Env
           if(voices[i]) {
-            ampEnvC.amplitude(voiceVels[i], attackTime);
+            ampEnvC.amplitude(voiceVels[i], ampAttackTime);
             filterEnvC.amplitude(voiceVels[i],filterEnvAttackTime);
           }
           else {
-            ampEnvC.amplitude(0, releaseTime);
+            ampEnvC.amplitude(0, ampReleaseTime);
             filterEnvC.amplitude(0,filterEnvReleaseTime);
           }
         break;
@@ -319,16 +330,16 @@ void loop() {
 
       case 3: {
         //VoiceD
-          oscOneD.frequency(voiceFreqs[i] * octave[octaveKey] * lfoPitchMod);
-          oscTwoD.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune * lfoPitchMod);
-          oscThreeD.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune * lfoPitchMod);
+          oscOneD.frequency(voiceFreqs[i] * octave[octaveKey]);
+          oscTwoD.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
+          oscThreeD.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
           //Env
           if(voices[i]) {
-            ampEnvD.amplitude(voiceVels[i], attackTime);
+            ampEnvD.amplitude(voiceVels[i], ampAttackTime);
             filterEnvD.amplitude(voiceVels[i],filterEnvAttackTime);
           }
           else {
-            ampEnvD.amplitude(0, releaseTime);
+            ampEnvD.amplitude(0, ampReleaseTime);
             filterEnvD.amplitude(0,filterEnvReleaseTime);
           }
         break;
@@ -691,7 +702,7 @@ void setOsc3Shape(uint8_t wave) {
   }
 }
 
-void setLfoShape(uint8_t wave) {
+void setLfo1Shape(uint8_t wave) {
   wave %= NUM_LFO_WAVEFORMS;
   switch(wave) {
 
@@ -709,6 +720,28 @@ void setLfoShape(uint8_t wave) {
 
     case 3:
       lfo1.begin(WAVEFORM_SAMPLE_HOLD);
+      break;
+  }
+}
+
+void setLfo2Shape(uint8_t wave) {
+  wave %= NUM_LFO_WAVEFORMS;
+  switch(wave) {
+
+    case 0:
+      lfo2.begin(WAVEFORM_SINE);
+      break;
+
+    case 1:
+      lfo2.begin(WAVEFORM_SAWTOOTH_REVERSE);
+      break;
+
+    case 2:
+      lfo2.begin(WAVEFORM_SQUARE);
+      break;
+
+    case 3:
+      lfo2.begin(WAVEFORM_SAMPLE_HOLD);
       break;
   }
 }
@@ -742,71 +775,144 @@ void updateEncoder() {
 void setSynthParam(uint8_t number, uint8_t value) {
   float valueNorm = value * DIV127;
   switch (number) {
-    case 11 ... 14: { // OSC1...3 amp
-      float gain = valueNorm*0.5;
-      voiceMixerA.gain(number-11, gain);
-      voiceMixerB.gain(number-11, gain);
-      voiceMixerC.gain(number-11, gain);
-      voiceMixerD.gain(number-11, gain);
+    case 11 ... 14: { // OSC1...3, noise amp
+      voiceMixerA.gain(number-11, valueNorm*0.25);
+      voiceMixerB.gain(number-11, valueNorm*0.25);
+      voiceMixerC.gain(number-11, valueNorm*0.25);
+      voiceMixerD.gain(number-11, valueNorm*0.25);
       break;
     }
 
     case 15:
-      setOsc1Shape(value);
-      break;
+    setOsc1Shape(value);
+    break;
 
     case 16:
-      setOsc2Shape(value);
-      break;
+    setOsc2Shape(value);
+    break;
 
     case 17:
-      setOsc3Shape(value);
+    setOsc3Shape(value);
     break;
 
     case 18:
-      setLfoShape(value);
+    octaveKey = valueNorm * 4; // Octave
+    octaveKey = int(constrain(octaveKey, 0, 3));
     break;
 
-      lfo1Freq = sq(valueNorm)*20; // lfo1 freq
+    case 19:
+    masterDetune = sq(valueNorm); // Detune
+    plusDetune =  1 + masterDetune * 0.5;
+    minusDetune = 1 - masterDetune * 0.25;
+    break;
 
-      lfo1Amt = valueNorm/256; // lfo1 amount
+    case 20:
+    setLfo1Shape(value);
+    break;
 
-      lfo2Freq = sq(valueNorm)*20; // lfo2 freq
+    case 21:
+    lfo1Freq = sq(valueNorm)*20; // lfo1 freq
+    break;
 
-      lfo2Amt = valueNorm/256; // lfo2 amount
+    case 22:
+    lfo1Amt = valueNorm/256; // lfo1 amount
+    break;
 
-      masterDetune = sq(valueNorm); // Detune
-      plusDetune =  1 + masterDetune * 0.5;
-      minusDetune = 1 - masterDetune * 0.25;
+    case 23:
+    setLfo2Shape(value);
+    break;
 
-      octaveKey = valueNorm * 4; // Octave
-      octaveKey = int(constrain(octaveKey, 0, 3));
+    case 24:
+    lfo2Freq = sq(valueNorm)*20; // lfo1 freq
+    break;
 
-      filterFreq = 40 + sq(valueNorm) * 16000; // Filter cutoff freq
+    case 25:
+    lfo2Amt = valueNorm/256; // lfo1 amount
+    break;
 
-      filterRes = 0.7 + valueNorm * 4.3; // Filter resonance
+    case 26:
+    filterFreq = 40 + sq(valueNorm) * 16000; // Filter cutoff freq
+    break;
 
-      attackTime = sq(valueNorm) * 10000 +1;
+    case 27:
+    filterRes = 0.7 + valueNorm * 4.3; // Filter resonance
+    break;
 
-      releaseTime = sq(valueNorm) * 10000 + 1;
+    case 28:
+    filterEnvDepth = valueNorm;
+    break;
 
-      filterEnvAttackTime = sq(valueNorm) * 10000 + 1;
+    case 29:
+    // lfo2Amt = valueNorm;
+    break;
 
-      filterEnvReleaseTime = sq(valueNorm) * 10000 + 1;
+    case 30:
+    ampAttackTime = sq(valueNorm) * 10000 +1;
+    break;
 
-      delay1.delay(0, sq(valueNorm) * 999 + 1); // Delay time
+    case 31:
+    ampDecayTime = sq(valueNorm) * 10000 +1;
+    break;
 
-      delayFbMixer.gain(1, valueNorm * 0.862); // Delay feedback
+    case 32:
+    ampSustainLevel = valueNorm;
+    break;
 
-      delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
+    case 33:
+    ampReleaseTime = sq(valueNorm) * 10000 + 1;
+    break;
 
-      delayMixer.gain(1, valueNorm); // Delay mix
+    case 34:
+    filterEnvAttackTime = sq(valueNorm) * 10000 + 1;
+    break;
 
-      freeverbs1.roomsize(valueNorm); // Reverb size
+    case 35:
+    filterEnvDecayTime = sq(valueNorm) * 10000 + 1;
+    break;
 
-      freeverbs1.damping(valueNorm); // Reverb damping
+    case 36:
+    filterEnvSustainLevel = valueNorm;
+    break;
 
-      reverbMixerL.gain(1, valueNorm); // Reverb mix
-      reverbMixerR.gain(1, valueNorm);
+    case 37:
+    filterEnvReleaseTime = sq(valueNorm) * 10000 + 1;
+    break;
+
+    case 38:
+    // lfo1PitchMod = valueNorm;
+    break;
+
+    case 39:
+    delay1.delay(0, sq(valueNorm) * 999 + 1); // Delay time
+    break;
+
+    case 40:
+    delayFbMixer.gain(1, valueNorm * 0.862); // Delay feedback
+    break;
+
+    case 41:
+    delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
+    break;
+
+    case 42:
+    delayMixer.gain(1, valueNorm); // Delay mix
+    break;
+
+    case 43:
+    freeverbs1.roomsize(valueNorm); // Reverb size
+    break;
+
+    case 44:
+    freeverbs1.damping(valueNorm); // Reverb damping
+    break;
+
+    case 45:
+    reverbMixerL.gain(1, valueNorm); // Reverb mix
+    reverbMixerR.gain(1, valueNorm);
+    break;
+
+    case 46:
+    break;
+
   }
 }
