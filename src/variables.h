@@ -36,10 +36,10 @@ unsigned long clearTimeStamp;
 //preset stuff
 uint8_t presetNumber = -1;
 File    myFile;
-const String fileNames[16] = {"00.TXT","01.TXT","02.TXT","03.TXT",
-                              "04.TXT","05.TXT","06.TXT","07.TXT",
-                              "08.TXT","09.TXT","10.TXT","11.TXT",
-                              "12.TXT","13.TXT","14.TXT","15.TXT"};
+const String fileNames[NUM_PRESETS] = {"00.TXT","01.TXT","02.TXT","03.TXT",
+                                       "04.TXT","05.TXT","06.TXT","07.TXT",
+                                       "08.TXT","09.TXT","10.TXT","11.TXT",
+                                       "12.TXT","13.TXT","14.TXT","15.TXT"};
 
 //Synth Params
 float finalAmp;
@@ -53,17 +53,26 @@ int   ampAttackTime = 10;
 int   ampDecayTime = 10;
 int   ampSustainLevel = 1;
 int   ampReleaseTime = 10;
-float lfo1Amt;
-float lfo1Freq;
-float lfo2Amt;
-float lfo2Freq;
+
+bool isActiveEnvA;
+bool isActiveEnvB;
+bool isActiveEnvC;
+bool isActiveEnvD;
+
+float lfo1Freq = 1;
+float lfo2Freq = 1;
+float lfo1Depth;
+float lfo2Depth;
+
 float lfo1PitchMod = 1;
-// const int   lfoTimeMathArray[5] = {250, 500, 1000, 2000, 4000};
-const float octave[4] = {.25,.5,1,2};
-const int   midiOctave[4] = {-24, -12, 0, 12};
-int   octaveKey;
+const float octaves[4] = {.5,1,1.5,2};
+uint8_t   octaveOsc1;
+uint8_t   octaveOsc2;
+uint8_t   octaveOsc3;
 int   filterFreq = 1000;
 float filterRes;
+float filterEnvDepth;
+
 float masterDetune;
 float plusDetune;
 float minusDetune;
@@ -71,7 +80,6 @@ unsigned long filterEnvAttackTime = 10;
 unsigned long filterEnvDecayTime = 10;
 unsigned long filterEnvSustainLevel = 1;
 unsigned long filterEnvReleaseTime = 10;
-unsigned int filterEnvDepth;
 
 float voices[NUM_VOICES];
 float voiceFreqs[NUM_VOICES];

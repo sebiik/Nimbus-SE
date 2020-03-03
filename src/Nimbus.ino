@@ -18,6 +18,7 @@
 
 /***************************** Setup ***************************/
 void setup() {
+  #include "voiceStatic.h"
 
   /* Initialize LCD */
   lcd.begin(16, 2);
@@ -79,142 +80,75 @@ void setup() {
   /* Initialize ADC */
   // initADC();
 
-  /* Initialize static values */
-  polyMixer.gain(0,.25);
-  polyMixer.gain(1,.25);
-  polyMixer.gain(2,.25);
-  polyMixer.gain(3,.25);
-  oscOneA.amplitude(.25);
-  oscOneB.amplitude(.25);
-  oscOneC.amplitude(.25);
-  oscOneD.amplitude(.25);
-  oscTwoA.amplitude(.25);
-  oscTwoB.amplitude(.25);
-  oscTwoC.amplitude(.25);
-  oscTwoD.amplitude(.25);
-  oscThreeA.amplitude(.25);
-  oscThreeB.amplitude(.25);
-  oscThreeC.amplitude(.25);
-  oscThreeD.amplitude(.25);
-  noiseWhite.amplitude(.125);
-  filterA.octaveControl(2.5);
-  filterB.octaveControl(2.5);
-  filterC.octaveControl(2.5);
-  filterD.octaveControl(2.5);
-  delayFilter1.setHighpass(0, 80, 0.7);
-  delayMixer.gain(0, 1);
-  delayFbMixer.gain(0, 1);
-  reverbMixerL.gain(0, 1);
-  reverbMixerR.gain(0, 1);
-  reverbInputFilter.setHighpass(0, 80, 0.7); // stage(0-3), frequency, resonance
-
-  lfo1.begin(.7,.5,WAVEFORM_SINE);
-  // lfo1.amplitude(1);
-  // lfo1.frequency(1);
-
-  lfo2.begin(.7,.5,WAVEFORM_SINE);
-  // lfo2.amplitude(1);
-  // lfo2.frequency(1);
-
-  setSynthParam(11,127);
-  setSynthParam(12,63);
-  setSynthParam(13,0);
-  setSynthParam(14,63);
-
-  setSynthParam(15,0);
-  setSynthParam(16,0);
-  setSynthParam(17,0);
-  setSynthParam(18,0);
-
-  setSynthParam(19,0);
-  setSynthParam(20,0);
-  setSynthParam(21,31);
-  setSynthParam(22,31);
-
-  setSynthParam(23,0);
-  setSynthParam(24,63);
-  setSynthParam(25,63);
-  setSynthParam(26,63);
-
-  setSynthParam(27,63);
-  setSynthParam(28,0);
-  setSynthParam(29,0);
-  setSynthParam(30,0);
-
-  setSynthParam(31,32);
-  setSynthParam(32,127);
-  setSynthParam(33,32);
-  setSynthParam(34,0);
-
-  setSynthParam(35,32);
-  setSynthParam(36,127);
-  setSynthParam(37,32);
-  setSynthParam(38,0);
-
-  setSynthParam(39,63);
-  setSynthParam(40,63);
-  setSynthParam(41,63);
-  setSynthParam(42,63);
-
-  setSynthParam(43,0);
-  setSynthParam(44,0);
-  setSynthParam(45,0);
-  setSynthParam(46,0);
-
   /* Initialize encoder */
-  // pinMode(ENCODER_PIN1, INPUT);
-  // pinMode(ENCODER_PIN2, INPUT);
-  // digitalWrite(ENCODER_PIN1, HIGH);
-  // digitalWrite(ENCODER_PIN2, HIGH);
-  // attachInterrupt(ENCODER_PIN1, updateEncoder, CHANGE);
-  // attachInterrupt(ENCODER_PIN2, updateEncoder, CHANGE);
+  pinMode(ENCODER_PIN1, INPUT);
+  pinMode(ENCODER_PIN2, INPUT);
+  digitalWrite(ENCODER_PIN1, HIGH);
+  digitalWrite(ENCODER_PIN2, HIGH);
+  attachInterrupt(ENCODER_PIN1, updateEncoder, CHANGE);
+  attachInterrupt(ENCODER_PIN2, updateEncoder, CHANGE);
 
   /*Initialize switches, encoderBtn */
-  // pinMode(BUTTON1_PIN, INPUT_PULLUP);
-  // pinMode(BUTTON2_PIN, INPUT_PULLUP);
-  // pinMode(BUTTON3_PIN, INPUT_PULLUP);
-  // pinMode(BUTTON4_PIN, INPUT_PULLUP);
-  // pinMode(ENCODER_SW_PIN, INPUT_PULLUP);
+  pinMode(BUTTON1_PIN, INPUT_PULLUP);
+  pinMode(BUTTON2_PIN, INPUT_PULLUP);
+  pinMode(BUTTON3_PIN, INPUT_PULLUP);
+  pinMode(BUTTON4_PIN, INPUT_PULLUP);
+  pinMode(ENCODER_SW_PIN, INPUT_PULLUP);
 
-  /* Initialize switch values */
-  // for (int i = 0; i < NUM_SWITCHES; ++i) {
-  //   if (i<4) {
-  //     rawVals[i + 16] = digitalRead(btnSwPins[i]);
-  //   }
-  //   switch (i) {
-  //     case 0:
-  //     setOsc1Shape(digitalRead(btnSwPins[i]));
-  //     break;
-  //     case 1:
-  //     setOsc2Shape(digitalRead(btnSwPins[i]));
-  //     break;
-  //     case 2:
-  //     setOsc3Shape(digitalRead(btnSwPins[i]));
-  //     break;
-  //     case 3:
-  //     setLfoShape(digitalRead(btnSwPins[i]));
-  //     break;
-  //     case 4:
-  //     if (!digitalRead(btnSwPins[i])) {// TODO: encoder switch isn't really used ATM
-  //       clearTimeStamp = millis();
-  //
-  //       menuCount++;
-  //       if (menuCount > 4) {
-  //         menuCount = 0;
-  //         // checkSeqStart();
-  //       }
-  //
-  //       if (menuCount == 4) {
-  //         // seqRunning = false;
-  //         // seqEditMode = true;
-  //       }
-  //       else{
-  //         // seqEditMode = false;
-  //       }
-  //     }
-  //     break;
-  //   }
-  // }
+  /* Test preset load and save */
+  setSynthParam(CC_OSC1_VOLUME, 127);
+  setSynthParam(CC_OSC2_VOLUME, 127);
+  setSynthParam(CC_OSC3_VOLUME, 0);
+  setSynthParam(CC_NOISE_VOLUME, 0);
+
+  setSynthParam(CC_OSC1_SHAPE, 1);
+  setSynthParam(CC_OSC2_SHAPE, 2);
+  setSynthParam(CC_OSC3_SHAPE, 0);
+  setSynthParam(CC_DETUNE, 16);
+
+  setSynthParam(CC_OSC1_OCTAVE, 1);
+  setSynthParam(CC_OSC2_OCTAVE, 3);
+  setSynthParam(CC_OSC3_OCTAVE, 1);
+  setSynthParam(CC_LFO1_PITCH_DEPTH, 63); // TODO pseudo pink noise param?
+
+  setSynthParam(CC_LFO1_SHAPE, 0);
+  setSynthParam(CC_LFO1_FREQ, 32);
+  setSynthParam(CC_LFO1_, 0);
+  setSynthParam(CC_LFO1__, 0);
+
+  setSynthParam(CC_LFO2_SHAPE, 1);
+  setSynthParam(CC_LFO2_FREQ, 32);
+  setSynthParam(CC_LFO2_, 0);
+  setSynthParam(CC_LFO2__, 0);
+
+  setSynthParam(CC_FILTER_FREQ, 63);
+  setSynthParam(CC_FILTER_RESO, 63);
+  setSynthParam(CC_FILTER_ENV_DEPTH, 0);
+  setSynthParam(CC_LFO2_FILTER_DEPTH, 0);
+
+  setSynthParam(CC_AMP_ENV_ATTACK, 0);
+  setSynthParam(CC_AMP_ENV_DECAY, 16);
+  setSynthParam(CC_AMP_ENV_SUSTAIN, 127);
+  setSynthParam(CC_AMP_ENV_RELEASE, 16);
+
+  setSynthParam(CC_FILTER_ENV_ATTACK, 0);
+  setSynthParam(CC_FILTER_ENV_DECAY, 32);
+  setSynthParam(CC_FILTER_ENV_SUSTAIN, 0);
+  setSynthParam(CC_FILTER_ENV_RELEASE, 16);
+
+  setSynthParam(CC_DELAY_TIME, 0);
+  setSynthParam(CC_DELAY_FEEDBACK, 0);
+  setSynthParam(CC_DELAY_TONE, 0);
+  setSynthParam(CC_DELAY_MIX, 0);
+
+  setSynthParam(CC_REVERB_ROOMSIZE, 0);
+  setSynthParam(CC_REVERB_DAMPING, 0);
+  setSynthParam(CC_REVERB_INPUTFILTER, 0);
+  setSynthParam(CC_REVERB_MIX, 0);
+
+  for (int p=51; p<64; p++){
+    setSynthParam(p, 0);
+  }
 
 }
 
@@ -247,113 +181,120 @@ void loop() {
       if (btnSwBouncers[i].risingEdge()) {
         switch (i) {
           case 0 ... 3:
-            // switch layers directly
-            activeLayer = i; // TODO set respective LED
+          // switch layers directly
+          activeLayer = i; // TODO set respective LED
           break;
           case 4: // TODO encoder switch...or remove entirely
-            if (!digitalRead(btnSwPins[i])) {
-              clearTimeStamp = millis();
+          if (!digitalRead(btnSwPins[i])) {
+            clearTimeStamp = millis();
 
-              menuCount++;
-              menuCount %= 4;
+            menuCount++;
+            menuCount %= 4;
 
-              if (menuCount == 4) { }
-              else { }
-            }
+            if (menuCount == 4) { }
+            else { }
+          }
           break;
         }
       }
     }
   }
 
-
-  /* ClearEverything // long-press encoder switch for 2 sec clears everything? */
-  // if ((abs(millis() - clearTimeStamp) > 2000) && !digitalRead(20)) {
-  //   clearEverything();
-  //   clearTimeStamp = millis();
-  // }
-
   /* Handle poly voices */
-  for (int i = 0; i < NUM_VOICES; ++i) {
-    switch(i) {
+  for (uint8_t v = 0; v < NUM_VOICES; v++) {
+    switch(v) {
 
       case 0: {
         //VoiceA
-          oscOneA.frequency(voiceFreqs[i] * octave[octaveKey]);
-          oscTwoA.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
-          oscThreeA.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
-          //Env
-          if(voices[i]) {
-            ampEnvA.amplitude(voiceVels[i], ampAttackTime);
-            filterEnvA.amplitude(voiceVels[i],filterEnvAttackTime);
+        oscOneA.frequency(voiceFreqs[v] * octaves[octaveOsc1]);
+        oscTwoA.frequency(voiceFreqs[v] * octaves[octaveOsc2] * plusDetune);
+        oscThreeA.frequency(voiceFreqs[v] * octaves[octaveOsc3] * minusDetune);
+        //Env
+        if(voices[v]) {
+          if (!isActiveEnvA) {
+            ampEnvA.noteOn();
+            filterEnvA.noteOn();
+            isActiveEnvA = true;
           }
-          else {
-            ampEnvA.amplitude(0, ampReleaseTime);
-            filterEnvA.amplitude(0,filterEnvReleaseTime);
-          }
+        }
+        else {
+          ampEnvA.noteOff();
+          filterEnvA.noteOff();
+          isActiveEnvA = false;
+        }
         break;
       }
 
       case 1: {
         //VoiceB
-          oscOneB.frequency(voiceFreqs[i] * octave[octaveKey]);
-          oscTwoB.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
-          oscThreeB.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
-          //Env
-          if(voices[i]) {
-            ampEnvB.amplitude(voiceVels[i], ampAttackTime);
-            filterEnvB.amplitude(voiceVels[i],filterEnvAttackTime);
+        oscOneB.frequency(voiceFreqs[v] * octaves[octaveOsc1]);
+        oscTwoB.frequency(voiceFreqs[v] * octaves[octaveOsc2] * plusDetune);
+        oscThreeB.frequency(voiceFreqs[v] * octaves[octaveOsc3] * minusDetune);
+        //Env
+        if(voices[v]) {
+          if (!isActiveEnvB) {
+            ampEnvB.noteOn();
+            filterEnvB.noteOn();
+            isActiveEnvB = true;
           }
-          else {
-            ampEnvB.amplitude(0, ampReleaseTime);
-            filterEnvB.amplitude(0,filterEnvReleaseTime);
-          }
+        }
+        else {
+          ampEnvB.noteOff();
+          filterEnvB.noteOff();
+          isActiveEnvB = false;
+        }
         break;
       }
 
       case 2: {
         //VoiceC
-          oscOneC.frequency(voiceFreqs[i] * octave[octaveKey]);
-          oscTwoC.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
-          oscThreeC.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
-          //Env
-          if(voices[i]) {
-            ampEnvC.amplitude(voiceVels[i], ampAttackTime);
-            filterEnvC.amplitude(voiceVels[i],filterEnvAttackTime);
+        oscOneC.frequency(voiceFreqs[v] * octaves[octaveOsc1]);
+        oscTwoC.frequency(voiceFreqs[v] * octaves[octaveOsc2] * plusDetune);
+        oscThreeC.frequency(voiceFreqs[v] * octaves[octaveOsc3] * minusDetune);
+        //Env
+        if(voices[v]) {
+          if (!isActiveEnvC) {
+            ampEnvC.noteOn();
+            filterEnvC.noteOn();
+            isActiveEnvC = true;
           }
-          else {
-            ampEnvC.amplitude(0, ampReleaseTime);
-            filterEnvC.amplitude(0,filterEnvReleaseTime);
-          }
+        }
+        else {
+          ampEnvC.noteOff();
+          filterEnvC.noteOff();
+          isActiveEnvC = false;
+        }
         break;
       }
 
       case 3: {
         //VoiceD
-          oscOneD.frequency(voiceFreqs[i] * octave[octaveKey]);
-          oscTwoD.frequency(voiceFreqs[i] * octave[octaveKey] * plusDetune);
-          oscThreeD.frequency(voiceFreqs[i] * octave[octaveKey] * minusDetune);
-          //Env
-          if(voices[i]) {
-            ampEnvD.amplitude(voiceVels[i], ampAttackTime);
-            filterEnvD.amplitude(voiceVels[i],filterEnvAttackTime);
+        oscOneD.frequency(voiceFreqs[v] * octaves[octaveOsc1]);
+        oscTwoD.frequency(voiceFreqs[v] * octaves[octaveOsc2] * plusDetune);
+        oscThreeD.frequency(voiceFreqs[v] * octaves[octaveOsc3] * minusDetune);
+        //Env
+        if(voices[v]) {
+          if (!isActiveEnvD) {
+            ampEnvD.noteOn();
+            filterEnvD.noteOn();
+            isActiveEnvD = true;
           }
-          else {
-            ampEnvD.amplitude(0, ampReleaseTime);
-            filterEnvD.amplitude(0,filterEnvReleaseTime);
-          }
+        }
+        else {
+          ampEnvD.noteOff();
+          filterEnvD.noteOff();
+          isActiveEnvD = false;
+        }
         break;
       }
     }
   }
 
-  /* Update lfo values */
+  /* Update LFOs*/
   lfo1.frequency(lfo1Freq);
-  lfo1.amplitude(lfo1Amt);
   lfo2.frequency(lfo2Freq);
-  lfo2.amplitude(lfo2Amt);
 
-  /* Update filter values */
+  /* Update filter */
   filterA.frequency(filterFreq);
   filterB.frequency(filterFreq);
   filterC.frequency(filterFreq);
@@ -362,34 +303,44 @@ void loop() {
   filterB.resonance(filterRes);
   filterC.resonance(filterRes);
   filterD.resonance(filterRes);
+  filterModMixerA.gain(0, filterEnvDepth);
+  filterModMixerB.gain(0, filterEnvDepth);
+  filterModMixerC.gain(0, filterEnvDepth);
+  filterModMixerD.gain(0, filterEnvDepth);
+  filterModMixerA.gain(1, lfo2Depth);
+  filterModMixerB.gain(1, lfo2Depth);
+  filterModMixerC.gain(1, lfo2Depth);
+  filterModMixerD.gain(1, lfo2Depth);
 
-  //voiceA peak analyzer
+
+  // Voice peak analyzers
   if (peakA.available()) {
     voiceAPeak = peakA.read();
     ampArray[0] = voiceAPeak;
   }
-  //voiceB peak analyzer
   if (peakB.available()) {
     voiceBPeak = peakB.read();
-     ampArray[1] = voiceBPeak;
+    ampArray[1] = voiceBPeak;
   }
-  //voiceC peak analyzer
   if (peakC.available()) {
     voiceCPeak = peakC.read();
     ampArray[2] = voiceCPeak;
   }
-  //voiceD peak analyzer
   if (peakD.available()) {
     voiceDPeak = peakD.read();
     ampArray[3] = voiceDPeak;
   }
-  //FinalPeak analyzer
+  // Final peak analyzer
   if (finalPeak.available()) {
     finalAmp = finalPeak.read();
   }
 
 }
 
+/* Init SD function */
+void initSD(void) {
+
+}
 
 /* ADC, button read functions */
 void initADC(void) {
@@ -443,13 +394,12 @@ void updateCC(void) {
 /* MIDI functions */
 void OnNoteOn(uint8_t channel, uint8_t note, uint8_t velocity) {
   if (note >= 108) {
-    loadPreset(note - 108);
-    lcd.clear();
-    lcd.write("Loaded "); lcd.print(fileNames[note-108]);
-
+      savePreset(note - 108);
+      lcd.clear();
+      lcd.write("Saved "); lcd.print(fileNames[note-108]);
   }
   else {
-    float freq = 440.0 * powf(2.0, (float)(note - 45) * 0.08333333);
+    float freq = 440.0 * powf(2.0, (float)(note - 69) * 0.08333333);
     float vel = (float)velocity * DIV127;
     startVoice(freq, vel);
     lcd.clear(); lcd.write("Note on:  ");
@@ -460,7 +410,7 @@ void OnNoteOn(uint8_t channel, uint8_t note, uint8_t velocity) {
 }
 
 void OnNoteOff(uint8_t channel, uint8_t note, uint8_t velocity) {
-  float freq = 440.0 * powf(2.0, (float)(note - 45) * 0.08333333);
+  float freq = 440.0 * powf(2.0, (float)(note - 69) * 0.08333333);
   endVoice(freq);
   lcd.clear(); lcd.write("Note off: ");
   lcd.write("chn:"); lcd.print(channel); lcd.write(" ");
@@ -470,8 +420,8 @@ void OnNoteOff(uint8_t channel, uint8_t note, uint8_t velocity) {
 
 void OnControlChange(uint8_t channel, uint8_t control, uint8_t value) {
   setSynthParam(control, value);
-  controls[control] = value;
-  paramLocks[control] = true;
+  controls[control-11] = value;
+  paramLocks[control-11] = true; //TODO parameter locks
   lcd.clear(); lcd.write("ControlC: ");
   lcd.write("chn:"); lcd.print(channel); lcd.write(" ");
   lcd.write("cc#:"); lcd.print(control); lcd.write(" ");
@@ -479,14 +429,13 @@ void OnControlChange(uint8_t channel, uint8_t control, uint8_t value) {
 }
 
 void OnProgramChange(uint8_t channel, uint8_t value) {
-  //seb
   loadPreset(value);
 }
 
 
 /* Note functions */
 void startVoice(float frequency, float velocity) {
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     if (!voices[i]) {
       voices[i] = frequency;
       voiceFreqs[i] = frequency;
@@ -499,7 +448,7 @@ void startVoice(float frequency, float velocity) {
 
   voiceNum = lowestAmp();
   //if voice is already in use scan to next voice
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     if (voices[voiceNum]) {
       voiceNum++;
       if (voiceNum > 3) {
@@ -515,14 +464,14 @@ void startVoice(float frequency, float velocity) {
 }
 
 void endVoice(float frequency) {
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     if(voiceFreqs[i] == frequency) {
       voices[i] = 0;
     }
   }
 }
 
-int lowestAmp() {
+int lowestAmp(void) {
   int index = 0;
   for (int i = 0; i < 4; i++) {
     if (ampArray[i] < ampArray[index]) {
@@ -540,15 +489,15 @@ void loadPreset(uint8_t number) {
   myFile = SD.open(currentPreset.c_str());
 
   if (myFile) {
-    for (uint8_t i = 0; i < NUM_SYNTH_PARAMS; i++) {
+    for (uint8_t p = 0; p < NUM_SYNTH_PARAMS; p++) {
       int input = myFile.parseFloat();
-      controls[i] = input;
-      paramLocks[i] = true;
+      controls[p] = input;
+      paramLocks[p] = true;
     }
     myFile.close();
     lcd.clear(); lcd.write("Loaded "); lcd.print(currentPreset);
-    for (uint8_t i = 0; i < NUM_SYNTH_PARAMS; i++) {
-      setSynthParam(i+11, controls[i]);
+    for (uint8_t c = 0; c < NUM_SYNTH_PARAMS; c++) {
+      setSynthParam(c+11, controls[c]);
     }
     presetNumber = number;
   } else {
@@ -572,15 +521,17 @@ void savePreset(uint8_t number) {
   myFile = SD.open(currentPreset.c_str(), FILE_WRITE);
   //if the file opened okay, write to it:
   if (myFile) {
-    for (uint8_t i = 0; i < NUM_SYNTH_PARAMS; i++) {
+    for (uint8_t i = 0; i<NUM_SYNTH_PARAMS; i++) {
       myFile.println(controls[i]);
     }
     myFile.close();
+    lcd.clear(); lcd.write("Saved "); lcd.print(currentPreset);
     #ifdef DEBUG_MODE
     Serial.print("wrote to file");
     #endif
   } else {
     // if the file didn't open, print an error:
+    lcd.clear(); lcd.write("Error saving    "); lcd.print(currentPreset);
     #ifdef DEBUG_MODE
     Serial.println("error opening file");
     #endif
@@ -593,74 +544,66 @@ void setOsc1Shape(uint8_t wave) {
   wave %= NUM_WAVEFORMS;
   switch(wave) {
     case 0:
-      oscOneA.begin(WAVEFORM_SAWTOOTH);
-      oscOneB.begin(WAVEFORM_SAWTOOTH);
-      oscOneC.begin(WAVEFORM_SAWTOOTH);
-      oscOneD.begin(WAVEFORM_SAWTOOTH);
-      break;
+    oscOneA.begin(WAVEFORM_SAWTOOTH);
+    oscOneB.begin(WAVEFORM_SAWTOOTH);
+    oscOneC.begin(WAVEFORM_SAWTOOTH);
+    oscOneD.begin(WAVEFORM_SAWTOOTH);
+    break;
 
     case 1:
-      oscOneA.begin(WAVEFORM_SQUARE);
-      oscOneB.begin(WAVEFORM_SQUARE);
-      oscOneC.begin(WAVEFORM_SQUARE);
-      oscOneD.begin(WAVEFORM_SQUARE);
-      break;
+    oscOneA.begin(WAVEFORM_SQUARE);
+    oscOneB.begin(WAVEFORM_SQUARE);
+    oscOneC.begin(WAVEFORM_SQUARE);
+    oscOneD.begin(WAVEFORM_SQUARE);
+    break;
 
     case 2:
-      oscOneA.pulseWidth(0.25);
-      oscOneB.pulseWidth(0.25);
-      oscOneC.pulseWidth(0.25);
-      oscOneD.pulseWidth(0.25);
-      oscOneA.begin(WAVEFORM_PULSE);
-      oscOneB.begin(WAVEFORM_PULSE);
-      oscOneC.begin(WAVEFORM_PULSE);
-      oscOneD.begin(WAVEFORM_PULSE);
-      break;
+    oscOneA.begin(WAVEFORM_PULSE);
+    oscOneB.begin(WAVEFORM_PULSE);
+    oscOneC.begin(WAVEFORM_PULSE);
+    oscOneD.begin(WAVEFORM_PULSE);
+    break;
 
     case 3:
-      oscOneA.begin(WAVEFORM_TRIANGLE);
-      oscOneB.begin(WAVEFORM_TRIANGLE);
-      oscOneC.begin(WAVEFORM_TRIANGLE);
-      oscOneD.begin(WAVEFORM_TRIANGLE);
-      break;
+    oscOneA.begin(WAVEFORM_TRIANGLE);
+    oscOneB.begin(WAVEFORM_TRIANGLE);
+    oscOneC.begin(WAVEFORM_TRIANGLE);
+    oscOneD.begin(WAVEFORM_TRIANGLE);
+    break;
 
   }
 }
 
-void setOsc2Shape(uint8_t wave) {
+void setOsc2Shape(uint8_t wave) { // TODO PWM
   wave %= NUM_WAVEFORMS;
   switch(wave) {
     case 0:
-      oscTwoA.begin(WAVEFORM_SAWTOOTH);
-      oscTwoB.begin(WAVEFORM_SAWTOOTH);
-      oscTwoC.begin(WAVEFORM_SAWTOOTH);
-      oscTwoD.begin(WAVEFORM_SAWTOOTH);
-      break;
+    oscTwoA.begin(WAVEFORM_SAWTOOTH);
+    oscTwoB.begin(WAVEFORM_SAWTOOTH);
+    oscTwoC.begin(WAVEFORM_SAWTOOTH);
+    oscTwoD.begin(WAVEFORM_SAWTOOTH);
+    break;
 
     case 1:
-      oscTwoA.begin(WAVEFORM_SQUARE);
-      oscTwoB.begin(WAVEFORM_SQUARE);
-      oscTwoC.begin(WAVEFORM_SQUARE);
-      oscTwoD.begin(WAVEFORM_SQUARE);
-      break;
+    oscTwoA.begin(WAVEFORM_SQUARE);
+    oscTwoB.begin(WAVEFORM_SQUARE);
+    oscTwoC.begin(WAVEFORM_SQUARE);
+    oscTwoD.begin(WAVEFORM_SQUARE);
+    break;
 
     case 2:
-      oscTwoA.pulseWidth(0.25);
-      oscTwoB.pulseWidth(0.25);
-      oscTwoC.pulseWidth(0.25);
-      oscTwoD.pulseWidth(0.25);
-      oscTwoA.begin(WAVEFORM_PULSE);
-      oscTwoB.begin(WAVEFORM_PULSE);
-      oscTwoC.begin(WAVEFORM_PULSE);
-      oscTwoD.begin(WAVEFORM_PULSE);
-      break;
+    oscTwoA.begin(WAVEFORM_PULSE);
+    oscTwoB.begin(WAVEFORM_PULSE);
+    oscTwoC.begin(WAVEFORM_PULSE);
+    oscTwoD.begin(WAVEFORM_PULSE);
+    break;
 
     case 3:
-      oscTwoA.begin(WAVEFORM_TRIANGLE);
-      oscTwoB.begin(WAVEFORM_TRIANGLE);
-      oscTwoC.begin(WAVEFORM_TRIANGLE);
-      oscTwoD.begin(WAVEFORM_TRIANGLE);
-      break;
+    oscTwoA.begin(WAVEFORM_TRIANGLE);
+    oscTwoB.begin(WAVEFORM_TRIANGLE);
+    oscTwoC.begin(WAVEFORM_TRIANGLE);
+    oscTwoD.begin(WAVEFORM_TRIANGLE);
+    break;
   }
 }
 
@@ -669,36 +612,32 @@ void setOsc3Shape(uint8_t wave) {
   switch(wave) {
 
     case 0:
-      oscThreeA.begin(WAVEFORM_SAWTOOTH);
-      oscThreeB.begin(WAVEFORM_SAWTOOTH);
-      oscThreeC.begin(WAVEFORM_SAWTOOTH);
-      oscThreeD.begin(WAVEFORM_SAWTOOTH);
-      break;
+    oscThreeA.begin(WAVEFORM_SAWTOOTH);
+    oscThreeB.begin(WAVEFORM_SAWTOOTH);
+    oscThreeC.begin(WAVEFORM_SAWTOOTH);
+    oscThreeD.begin(WAVEFORM_SAWTOOTH);
+    break;
 
     case 1:
-      oscThreeA.begin(WAVEFORM_SQUARE);
-      oscThreeB.begin(WAVEFORM_SQUARE);
-      oscThreeC.begin(WAVEFORM_SQUARE);
-      oscThreeD.begin(WAVEFORM_SQUARE);
-      break;
+    oscThreeA.begin(WAVEFORM_SQUARE);
+    oscThreeB.begin(WAVEFORM_SQUARE);
+    oscThreeC.begin(WAVEFORM_SQUARE);
+    oscThreeD.begin(WAVEFORM_SQUARE);
+    break;
 
     case 2:
-      oscThreeA.pulseWidth(0.25); // TODO PWM
-      oscThreeB.pulseWidth(0.25);
-      oscThreeC.pulseWidth(0.25);
-      oscThreeD.pulseWidth(0.25);
-      oscThreeA.begin(WAVEFORM_PULSE);
-      oscThreeB.begin(WAVEFORM_PULSE);
-      oscThreeC.begin(WAVEFORM_PULSE);
-      oscThreeD.begin(WAVEFORM_PULSE);
-      break;
+    oscThreeA.begin(WAVEFORM_PULSE);
+    oscThreeB.begin(WAVEFORM_PULSE);
+    oscThreeC.begin(WAVEFORM_PULSE);
+    oscThreeD.begin(WAVEFORM_PULSE);
+    break;
 
     case 3:
-      oscThreeA.begin(WAVEFORM_TRIANGLE);
-      oscThreeB.begin(WAVEFORM_TRIANGLE);
-      oscThreeC.begin(WAVEFORM_TRIANGLE);
-      oscThreeD.begin(WAVEFORM_TRIANGLE);
-      break;
+    oscThreeA.begin(WAVEFORM_TRIANGLE);
+    oscThreeB.begin(WAVEFORM_TRIANGLE);
+    oscThreeC.begin(WAVEFORM_TRIANGLE);
+    oscThreeD.begin(WAVEFORM_TRIANGLE);
+    break;
   }
 }
 
@@ -707,20 +646,20 @@ void setLfo1Shape(uint8_t wave) {
   switch(wave) {
 
     case 0:
-      lfo1.begin(WAVEFORM_SINE);
-      break;
+    lfo1.begin(WAVEFORM_SINE);
+    break;
 
     case 1:
-      lfo1.begin(WAVEFORM_SAWTOOTH_REVERSE);
-      break;
+    lfo1.begin(WAVEFORM_SAWTOOTH_REVERSE);
+    break;
 
     case 2:
-      lfo1.begin(WAVEFORM_SQUARE);
-      break;
+    lfo1.begin(WAVEFORM_SQUARE);
+    break;
 
     case 3:
-      lfo1.begin(WAVEFORM_SAMPLE_HOLD);
-      break;
+    lfo1.begin(WAVEFORM_SAMPLE_HOLD);
+    break;
   }
 }
 
@@ -729,24 +668,24 @@ void setLfo2Shape(uint8_t wave) {
   switch(wave) {
 
     case 0:
-      lfo2.begin(WAVEFORM_SINE);
-      break;
+    lfo2.begin(WAVEFORM_SINE);
+    break;
 
     case 1:
-      lfo2.begin(WAVEFORM_SAWTOOTH_REVERSE);
-      break;
+    lfo2.begin(WAVEFORM_SAWTOOTH_REVERSE);
+    break;
 
     case 2:
-      lfo2.begin(WAVEFORM_SQUARE);
-      break;
+    lfo2.begin(WAVEFORM_SQUARE);
+    break;
 
     case 3:
-      lfo2.begin(WAVEFORM_SAMPLE_HOLD);
-      break;
+    lfo2.begin(WAVEFORM_SAMPLE_HOLD);
+    break;
   }
 }
 
-void clearEverything() {
+void clearEverything(void) {
   menuCount = 0;
   presetNumber = -1;
   for (int i = 0; i < NUM_CONTROLS; i++) {
@@ -757,7 +696,7 @@ void clearEverything() {
   }
 }
 
-void updateEncoder() {
+void updateEncoder(void) {
   int MSB = digitalRead(ENCODER_PIN1); //MSB = most significant bit
   int LSB = digitalRead(ENCODER_PIN2); //LSB = least significant bit
 
@@ -773,9 +712,11 @@ void updateEncoder() {
 }
 
 void setSynthParam(uint8_t number, uint8_t value) {
+  controls[number-CC_OSC1_VOLUME] = value;
+  controlsLast[number-CC_OSC1_VOLUME] = value;
   float valueNorm = value * DIV127;
   switch (number) {
-    case 11 ... 14: { // OSC1...3, noise amp
+    case CC_OSC1_VOLUME...CC_NOISE_VOLUME: {
       voiceMixerA.gain(number-11, valueNorm*0.25);
       voiceMixerB.gain(number-11, valueNorm*0.25);
       voiceMixerC.gain(number-11, valueNorm*0.25);
@@ -783,136 +724,213 @@ void setSynthParam(uint8_t number, uint8_t value) {
       break;
     }
 
-    case 15:
-    setOsc1Shape(value);
-    break;
+    case CC_OSC1_SHAPE: {
+      setOsc1Shape(value);
+      break;
+    }
 
-    case 16:
-    setOsc2Shape(value);
-    break;
+    case CC_OSC2_SHAPE: {
+      setOsc2Shape(value);
+      break;
+    }
 
-    case 17:
-    setOsc3Shape(value);
-    break;
+    case CC_OSC3_SHAPE: {
+      setOsc3Shape(value);
+      break;
+    }
 
-    case 18:
-    octaveKey = valueNorm * 4; // Octave
-    octaveKey = int(constrain(octaveKey, 0, 3));
-    break;
+    case CC_DETUNE: {
+      masterDetune = sq(valueNorm); // Detune
+      plusDetune =  1 + masterDetune * 0.25;
+      minusDetune = 1 - masterDetune * 0.125;
+      break;
+    }
 
-    case 19:
-    masterDetune = sq(valueNorm); // Detune
-    plusDetune =  1 + masterDetune * 0.5;
-    minusDetune = 1 - masterDetune * 0.25;
-    break;
+    case CC_OSC1_OCTAVE: {
+      octaveOsc1 = constrain(value, 0, 3);
+      break;
+    }
 
-    case 20:
-    setLfo1Shape(value);
-    break;
+    case CC_OSC2_OCTAVE: {
+      octaveOsc2 = constrain(value, 0, 3);
+      break;
+    }
 
-    case 21:
-    lfo1Freq = sq(valueNorm)*20; // lfo1 freq
-    break;
+    case CC_OSC3_OCTAVE: {
+      octaveOsc3 = constrain(value, 0, 3);
+      break;
+    }
 
-    case 22:
-    lfo1Amt = valueNorm/256; // lfo1 amount
-    break;
+    case CC_LFO1_PITCH_DEPTH: {
+      lfo1Depth = valueNorm;
+      break;
+    }
 
-    case 23:
-    setLfo2Shape(value);
-    break;
+    case CC_LFO1_SHAPE: {
+      setLfo1Shape(value);
+      break;
+    }
 
-    case 24:
-    lfo2Freq = sq(valueNorm)*20; // lfo1 freq
-    break;
+    case CC_LFO1_FREQ: {
+      lfo1Freq = sq(valueNorm)*30; // lfo1 freq
+      break;
+    }
 
-    case 25:
-    lfo2Amt = valueNorm/256; // lfo1 amount
-    break;
+    case CC_LFO1_: {
+      break;
+    }
 
-    case 26:
-    filterFreq = 40 + sq(valueNorm) * 16000; // Filter cutoff freq
-    break;
+    case CC_LFO1__: {
+      break;
+    }
 
-    case 27:
-    filterRes = 0.7 + valueNorm * 4.3; // Filter resonance
-    break;
+    case CC_LFO2_SHAPE: {
+      setLfo2Shape(value);
+      break;
+    }
 
-    case 28:
-    filterEnvDepth = valueNorm;
-    break;
+    case CC_LFO2_FREQ: {
+      lfo2Freq = sq(valueNorm)*30; // lfo1 freq
+      break;
+    }
 
-    case 29:
-    // lfo2Amt = valueNorm;
-    break;
+    case CC_LFO2_: {
+      break;
+    }
 
-    case 30:
-    ampAttackTime = sq(valueNorm) * 10000 +1;
-    break;
+    case CC_LFO2__: {
+      break;
+    }
 
-    case 31:
-    ampDecayTime = sq(valueNorm) * 10000 +1;
-    break;
+    case CC_FILTER_FREQ: {
+      filterFreq = 40 + sq(valueNorm) * 16000; // Filter cutoff freq
+      break;
+    }
 
-    case 32:
-    ampSustainLevel = valueNorm;
-    break;
+    case CC_FILTER_RESO: {
+      filterRes = 0.7 + valueNorm * 4.3; // Filter resonance
+      break;
+    }
 
-    case 33:
-    ampReleaseTime = sq(valueNorm) * 10000 + 1;
-    break;
+    case CC_FILTER_ENV_DEPTH: {
+      filterEnvDepth = valueNorm;
+      break;
+    }
 
-    case 34:
-    filterEnvAttackTime = sq(valueNorm) * 10000 + 1;
-    break;
+    case CC_LFO2_FILTER_DEPTH: {
+      lfo2Depth = valueNorm;
+      break;
+    }
 
-    case 35:
-    filterEnvDecayTime = sq(valueNorm) * 10000 + 1;
-    break;
+    case CC_AMP_ENV_ATTACK: {
+      float att = sq(valueNorm) * 11879 +1;
+      ampEnvA.attack(att);
+      ampEnvB.attack(att);
+      ampEnvC.attack(att);
+      ampEnvD.attack(att);
+      break;
+    }
 
-    case 36:
-    filterEnvSustainLevel = valueNorm;
-    break;
+    case CC_AMP_ENV_DECAY: {
+      float dec = sq(valueNorm) * 11879 +1;
+      ampEnvA.decay(dec);
+      ampEnvB.decay(dec);
+      ampEnvC.decay(dec);
+      ampEnvD.decay(dec);
+      break;
+    }
 
-    case 37:
-    filterEnvReleaseTime = sq(valueNorm) * 10000 + 1;
-    break;
+    case CC_AMP_ENV_SUSTAIN: {
+      ampEnvA.sustain(valueNorm);
+      ampEnvB.sustain(valueNorm);
+      ampEnvC.sustain(valueNorm);
+      ampEnvD.sustain(valueNorm);
+      break;
+    }
 
-    case 38:
-    // lfo1PitchMod = valueNorm;
-    break;
+    case CC_AMP_ENV_RELEASE: {
+      float rel = sq(valueNorm) * 11879 +1;
+      ampEnvA.release(rel);
+      ampEnvB.release(rel);
+      ampEnvC.release(rel);
+      ampEnvD.release(rel);
+      break;
+    }
 
-    case 39:
-    delay1.delay(0, sq(valueNorm) * 999 + 1); // Delay time
-    break;
+    case CC_FILTER_ENV_ATTACK: {
+      float att = sq(valueNorm) * 11879 +1;
+      filterEnvA.attack(att);
+      filterEnvB.attack(att);
+      filterEnvC.attack(att);
+      filterEnvD.attack(att);
+      break;
+    }
 
-    case 40:
-    delayFbMixer.gain(1, valueNorm * 0.862); // Delay feedback
-    break;
+    case CC_FILTER_ENV_DECAY: {
+      float dec = sq(valueNorm) * 11879 +1;
+      filterEnvA.decay(dec);
+      filterEnvB.decay(dec);
+      filterEnvC.decay(dec);
+      filterEnvD.decay(dec);
+      break;
+    }
 
-    case 41:
-    delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
-    break;
+    case CC_FILTER_ENV_SUSTAIN: {
+      filterEnvA.sustain(valueNorm);
+      filterEnvB.sustain(valueNorm);
+      filterEnvC.sustain(valueNorm);
+      filterEnvD.sustain(valueNorm);
+      break;
+    }
 
-    case 42:
-    delayMixer.gain(1, valueNorm); // Delay mix
-    break;
+    case CC_FILTER_ENV_RELEASE: {
+      float rel = sq(valueNorm) * 11879 +1;
+      filterEnvA.release(rel);
+      filterEnvB.release(rel);
+      filterEnvC.release(rel);
+      filterEnvD.release(rel);
+      break;
+    }
 
-    case 43:
-    freeverbs1.roomsize(valueNorm); // Reverb size
-    break;
+    case CC_DELAY_TIME: {
+      delay1.delay(0, sq(valueNorm) * 1499 + 1); // Delay time
+      break;
+    }
 
-    case 44:
-    freeverbs1.damping(valueNorm); // Reverb damping
-    break;
+    case CC_DELAY_FEEDBACK: {
+      delayFbMixer.gain(1, valueNorm * 0.862); // Delay feedback
+      break;
+    }
 
-    case 45:
-    reverbMixerL.gain(1, valueNorm); // Reverb mix
-    reverbMixerR.gain(1, valueNorm);
-    break;
+    case CC_DELAY_TONE: {
+      delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
+      break;
+    }
 
-    case 46:
-    break;
+    case CC_DELAY_MIX: {
+      delayMixer.gain(1, valueNorm); // Delay mix
+      break;
+    }
 
+    case CC_REVERB_ROOMSIZE: {
+      freeverbs1.roomsize(valueNorm); // Reverb size
+      break;
+    }
+
+    case CC_REVERB_DAMPING: {
+      freeverbs1.damping(valueNorm); // Reverb damping
+      break;
+    }
+
+    case CC_REVERB_INPUTFILTER: {
+      reverbInputFilter.setHighpass(0, 20 + sq(valueNorm)*3000, 0.7);
+      break;
+    }
+
+    case CC_REVERB_MIX: {
+      reverbMixerL.gain(1, valueNorm); // Reverb mix
+      reverbMixerR.gain(1, valueNorm);
+      break;
+    }
   }
 }
