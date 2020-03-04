@@ -26,6 +26,11 @@ AudioMixer4              voiceMixerB;
 AudioMixer4              voiceMixerC;
 AudioMixer4              voiceMixerD;
 
+AudioMixer4              pitchModMixerA;
+AudioMixer4              pitchModMixerB;
+AudioMixer4              pitchModMixerC;
+AudioMixer4              pitchModMixerD;
+
 AudioEffectEnvelope      ampEnvA;
 AudioEffectEnvelope      ampEnvB;
 AudioEffectEnvelope      ampEnvC;
@@ -85,6 +90,24 @@ AudioConnection          patchCord13(noiseWhite, 0, voiceMixerA, 3);
 AudioConnection          patchCord14(noiseWhite, 0, voiceMixerB, 3);
 AudioConnection          patchCord15(noiseWhite, 0, voiceMixerC, 3);
 AudioConnection          patchCord16(noiseWhite, 0, voiceMixerD, 3);
+
+AudioConnection          patchCord133(lfo1, 0, pitchModMixerA, 1);
+AudioConnection          patchCord134(lfo1, 0, pitchModMixerB, 1);
+AudioConnection          patchCord135(lfo1, 0, pitchModMixerC, 1);
+AudioConnection          patchCord136(lfo1, 0, pitchModMixerD, 1);
+
+AudioConnection          patchCord101(pitchModMixerA, 0, oscOneA, 0);
+AudioConnection          patchCord102(pitchModMixerB, 0, oscOneB, 0);
+AudioConnection          patchCord103(pitchModMixerC, 0, oscOneC, 0);
+AudioConnection          patchCord104(pitchModMixerD, 0, oscOneD, 0);
+AudioConnection          patchCord105(pitchModMixerA, 0, oscTwoA, 0);
+AudioConnection          patchCord106(pitchModMixerB, 0, oscTwoB, 0);
+AudioConnection          patchCord107(pitchModMixerC, 0, oscTwoC, 0);
+AudioConnection          patchCord108(pitchModMixerD, 0, oscTwoD, 0);
+AudioConnection          patchCord109(pitchModMixerA, 0, oscThreeA, 0);
+AudioConnection          patchCord110(pitchModMixerB, 0, oscThreeB, 0);
+AudioConnection          patchCord111(pitchModMixerC, 0, oscThreeC, 0);
+AudioConnection          patchCord112(pitchModMixerD, 0, oscThreeD, 0);
 
 AudioConnection          patchCord17(voiceMixerA, 0, filterA, 0);
 AudioConnection          patchCord18(voiceMixerB, 0, filterB, 0);

@@ -1,18 +1,19 @@
-// LCD
+// Create LCD instance
 hd44780_I2Clcd lcd;
 
-// DIN MIDI
+// Create DIN MIDI instance
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
 
+/* Encoder variables */
 volatile int lastEncoded = 0;
 volatile long encoderValue = 0;
 int scaledEncVal;
 int prevScaledEncVal;
 
-// MIDI 'divide by 127' helper
+/* MIDI 'multiply by 1/127' helper */
 const float DIV127 = (1.0 / 127.0);
 
-// Buttons, encoder switch
+/* Buttons, encoder switch */
 Bounce btnSwBouncers[NUM_SWITCHES] = {
   Bounce(BUTTON1_PIN, DEBOUNCE_MS),
   Bounce(BUTTON2_PIN, DEBOUNCE_MS),
@@ -20,7 +21,6 @@ Bounce btnSwBouncers[NUM_SWITCHES] = {
   Bounce(BUTTON4_PIN, DEBOUNCE_MS),
   Bounce(ENCODER_SW_PIN, DEBOUNCE_MS),
 };
-
 const uint8_t btnSwPins[NUM_SWITCHES] = {
   BUTTON1_PIN,
   BUTTON2_PIN,
@@ -29,6 +29,7 @@ const uint8_t btnSwPins[NUM_SWITCHES] = {
   ENCODER_SW_PIN
 };
 
+/* Unknown */
 uint8_t   menuCount;
 int   encoded;
 unsigned long clearTimeStamp;
@@ -41,7 +42,7 @@ const String fileNames[NUM_PRESETS] = {"00.TXT","01.TXT","02.TXT","03.TXT",
                                        "08.TXT","09.TXT","10.TXT","11.TXT",
                                        "12.TXT","13.TXT","14.TXT","15.TXT"};
 
-//Synth Params
+// Amp, peak values
 float finalAmp;
 float voiceAPeak;
 float voiceBPeak;
@@ -49,10 +50,10 @@ float voiceCPeak;
 float voiceDPeak;
 
 float frequency;
-int   ampAttackTime = 10;
-int   ampDecayTime = 10;
-int   ampSustainLevel = 1;
-int   ampReleaseTime = 10;
+// int   ampAttackTime = 10;
+// int   ampDecayTime = 10;
+// int   ampSustainLevel = 1;
+// int   ampReleaseTime = 10;
 
 bool isActiveEnvA;
 bool isActiveEnvB;
@@ -61,10 +62,10 @@ bool isActiveEnvD;
 
 float lfo1Freq = 1;
 float lfo2Freq = 1;
-float lfo1Depth;
-float lfo2Depth;
+float lfo1PitchDepth;
+float lfo2FilterDepth;
 
-float lfo1PitchMod = 1;
+float pitchMod = 1;
 const float octaves[4] = {.5,1,1.5,2};
 uint8_t   octaveOsc1;
 uint8_t   octaveOsc2;

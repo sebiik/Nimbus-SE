@@ -50,7 +50,7 @@
 #define CC_REVERB_MIX 50
 
 /* Uncomment for debug mode (prints debug info via serial) */
-#define DEBUG_MODE 1
+// #define DEBUG_MODE 1
 
 /* DIN MIDI */
 #define MIDI_CHANNEL 1 //seb hard-coded for now

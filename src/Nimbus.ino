@@ -97,33 +97,34 @@ void setup() {
 
   /* Test preset load and save */
   setSynthParam(CC_OSC1_VOLUME, 127);
-  setSynthParam(CC_OSC2_VOLUME, 127);
+  setSynthParam(CC_OSC2_VOLUME, 63);
   setSynthParam(CC_OSC3_VOLUME, 0);
   setSynthParam(CC_NOISE_VOLUME, 0);
 
-  setSynthParam(CC_OSC1_SHAPE, 1);
+  setSynthParam(CC_OSC1_SHAPE, 2);
   setSynthParam(CC_OSC2_SHAPE, 2);
   setSynthParam(CC_OSC3_SHAPE, 0);
-  setSynthParam(CC_DETUNE, 16);
+  setSynthParam(CC_DETUNE, 8);
 
   setSynthParam(CC_OSC1_OCTAVE, 1);
-  setSynthParam(CC_OSC2_OCTAVE, 3);
+  setSynthParam(CC_OSC2_OCTAVE, 1);
   setSynthParam(CC_OSC3_OCTAVE, 1);
-  setSynthParam(CC_LFO1_PITCH_DEPTH, 63); // TODO pseudo pink noise param?
+  setSynthParam(CC_LFO1_PITCH_DEPTH, 31);
 
-  setSynthParam(CC_LFO1_SHAPE, 0);
+  setSynthParam(CC_LFO1_SHAPE, 3);
   setSynthParam(CC_LFO1_FREQ, 32);
   setSynthParam(CC_LFO1_, 0);
   setSynthParam(CC_LFO1__, 0);
+  // TODO pseudo noise filter param?
 
   setSynthParam(CC_LFO2_SHAPE, 1);
   setSynthParam(CC_LFO2_FREQ, 32);
   setSynthParam(CC_LFO2_, 0);
   setSynthParam(CC_LFO2__, 0);
 
-  setSynthParam(CC_FILTER_FREQ, 63);
-  setSynthParam(CC_FILTER_RESO, 63);
-  setSynthParam(CC_FILTER_ENV_DEPTH, 0);
+  setSynthParam(CC_FILTER_FREQ, 31);
+  setSynthParam(CC_FILTER_RESO, 0);
+  setSynthParam(CC_FILTER_ENV_DEPTH, 63);
   setSynthParam(CC_LFO2_FILTER_DEPTH, 0);
 
   setSynthParam(CC_AMP_ENV_ATTACK, 0);
@@ -206,7 +207,7 @@ void loop() {
 
       case 0: {
         //VoiceA
-        oscOneA.frequency(voiceFreqs[v] * octaves[octaveOsc1]);
+        oscOneA.frequency(voiceFreqs[v] * octaves[octaveOsc1] * pitchMod);
         oscTwoA.frequency(voiceFreqs[v] * octaves[octaveOsc2] * plusDetune);
         oscThreeA.frequency(voiceFreqs[v] * octaves[octaveOsc3] * minusDetune);
         //Env
@@ -307,10 +308,20 @@ void loop() {
   filterModMixerB.gain(0, filterEnvDepth);
   filterModMixerC.gain(0, filterEnvDepth);
   filterModMixerD.gain(0, filterEnvDepth);
-  filterModMixerA.gain(1, lfo2Depth);
-  filterModMixerB.gain(1, lfo2Depth);
-  filterModMixerC.gain(1, lfo2Depth);
-  filterModMixerD.gain(1, lfo2Depth);
+  filterModMixerA.gain(1, lfo2FilterDepth);
+  filterModMixerB.gain(1, lfo2FilterDepth);
+  filterModMixerC.gain(1, lfo2FilterDepth);
+  filterModMixerD.gain(1, lfo2FilterDepth);
+
+  /* Update pitch mod */
+  pitchModMixerA.gain(0, 0); // TODO pitch env mod
+  pitchModMixerB.gain(0, 0);
+  pitchModMixerC.gain(0, 0);
+  pitchModMixerD.gain(0, 0);
+  pitchModMixerA.gain(1, lfo1PitchDepth);
+  pitchModMixerB.gain(1, lfo1PitchDepth);
+  pitchModMixerC.gain(1, lfo1PitchDepth);
+  pitchModMixerD.gain(1, lfo1PitchDepth);
 
 
   // Voice peak analyzers
@@ -402,20 +413,12 @@ void OnNoteOn(uint8_t channel, uint8_t note, uint8_t velocity) {
     float freq = 440.0 * powf(2.0, (float)(note - 69) * 0.08333333);
     float vel = (float)velocity * DIV127;
     startVoice(freq, vel);
-    lcd.clear(); lcd.write("Note on:  ");
-    lcd.write("chn:"); lcd.print(channel); lcd.write(" ");
-    lcd.write("nte:"); lcd.print(note); lcd.write(" ");
-    lcd.write("vel:"); lcd.print(velocity);
   }
 }
 
 void OnNoteOff(uint8_t channel, uint8_t note, uint8_t velocity) {
   float freq = 440.0 * powf(2.0, (float)(note - 69) * 0.08333333);
   endVoice(freq);
-  lcd.clear(); lcd.write("Note off: ");
-  lcd.write("chn:"); lcd.print(channel); lcd.write(" ");
-  lcd.write("nte:"); lcd.print(note); lcd.write(" ");
-  lcd.write("vel:"); lcd.print(velocity);
 }
 
 void OnControlChange(uint8_t channel, uint8_t control, uint8_t value) {
@@ -762,7 +765,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_LFO1_PITCH_DEPTH: {
-      lfo1Depth = valueNorm;
+      lfo1PitchDepth = sq(valueNorm);
       break;
     }
 
@@ -818,7 +821,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_LFO2_FILTER_DEPTH: {
-      lfo2Depth = valueNorm;
+      lfo2FilterDepth = valueNorm;
       break;
     }
 
