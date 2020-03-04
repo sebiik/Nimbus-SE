@@ -1,100 +1,110 @@
 #include "defines.h"
 
-// GUItool: begin automatically generated code
+/* Input, output */
 AudioControlSGTL5000     sgtl5000_1;
-AudioOutputI2S           i2s1;
+AudioOutputI2S           i2sOutput;
+AudioInputI2S            i2sInput;
 
+/* Oscillators, noise generator */
 AudioSynthWaveformModulated       oscOneA;
 AudioSynthWaveformModulated       oscOneB;
 AudioSynthWaveformModulated       oscOneC;
 AudioSynthWaveformModulated       oscOneD;
-
 AudioSynthWaveformModulated       oscTwoA;
 AudioSynthWaveformModulated       oscTwoB;
 AudioSynthWaveformModulated       oscTwoC;
 AudioSynthWaveformModulated       oscTwoD;
-
 AudioSynthWaveformModulated       oscThreeA;
 AudioSynthWaveformModulated       oscThreeB;
 AudioSynthWaveformModulated       oscThreeC;
 AudioSynthWaveformModulated       oscThreeD;
+AudioSynthNoiseWhite              noiseWhite;
 
-AudioSynthNoiseWhite     noiseWhite;
-
+/* Audio, modulation mixers */
 AudioMixer4              voiceMixerA;
 AudioMixer4              voiceMixerB;
 AudioMixer4              voiceMixerC;
 AudioMixer4              voiceMixerD;
-
+AudioMixer4              polyMixer;
 AudioMixer4              pitchModMixerA;
 AudioMixer4              pitchModMixerB;
 AudioMixer4              pitchModMixerC;
 AudioMixer4              pitchModMixerD;
-
-AudioEffectEnvelope      ampEnvA;
-AudioEffectEnvelope      ampEnvB;
-AudioEffectEnvelope      ampEnvC;
-AudioEffectEnvelope      ampEnvD;
-
-AudioEffectEnvelope      filterEnvA;
-AudioEffectEnvelope      filterEnvB;
-AudioEffectEnvelope      filterEnvC;
-AudioEffectEnvelope      filterEnvD;
-
-AudioSynthWaveform       lfo1;
-AudioSynthWaveform       lfo2;
-
-AudioSynthWaveformDc     dcOneVolt;
-
 AudioMixer4              filterModMixerA;
 AudioMixer4              filterModMixerB;
 AudioMixer4              filterModMixerC;
 AudioMixer4              filterModMixerD;
 
+/* Amp, filter, pitch envelopes, 1V reference */
+AudioEffectEnvelope      ampEnvA;
+AudioEffectEnvelope      ampEnvB;
+AudioEffectEnvelope      ampEnvC;
+AudioEffectEnvelope      ampEnvD;
+AudioEffectEnvelope      filterEnvA;
+AudioEffectEnvelope      filterEnvB;
+AudioEffectEnvelope      filterEnvC;
+AudioEffectEnvelope      filterEnvD;
+AudioEffectEnvelope      pitchEnvA; // TODO make aux envelope
+AudioEffectEnvelope      pitchEnvB;
+AudioEffectEnvelope      pitchEnvC;
+AudioEffectEnvelope      pitchEnvD;
+AudioSynthWaveformDc     dcOneVolt;
+
+/* LFOs */
+AudioSynthWaveform       lfo1;
+AudioSynthWaveform       lfo2;
+
+/* Filters */
 AudioFilterStateVariable filterA;
 AudioFilterStateVariable filterB;
 AudioFilterStateVariable filterC;
 AudioFilterStateVariable filterD;
 
+/* Peak analyzers */
 AudioAnalyzePeak         peakA;
 AudioAnalyzePeak         peakB;
 AudioAnalyzePeak         peakC;
 AudioAnalyzePeak         peakD;
-
-AudioMixer4              polyMixer;
 AudioAnalyzePeak         finalPeak;
 
+/* Delay effect */
 AudioEffectDelayExternal delay1;
 AudioMixer4              delayMixer;
 AudioMixer4              delayFbMixer;
-AudioFilterBiquad        delayFilter1;
+AudioFilterStateVariable delayFilter; // TODO state variable
 
-AudioEffectFreeverbStereo freeverbs1; //TODO hp/lp filter, gentle feedback loop
-AudioFilterBiquad         reverbInputFilter;
+/* Reverb effect */
+AudioEffectFreeverbStereo freeverbs; //TODO gentle feedback loop
+AudioFilterStateVariable  reverbInputFilter; // TODO state variable
 AudioMixer4               reverbMixerL;
 AudioMixer4               reverbMixerR;
 
-AudioConnection          patchCord1(oscOneA, 0, voiceMixerA, 0);
-AudioConnection          patchCord2(oscOneB, 0, voiceMixerB, 0);
-AudioConnection          patchCord3(oscOneC, 0, voiceMixerC, 0);
-AudioConnection          patchCord4(oscOneD, 0, voiceMixerD, 0);
-AudioConnection          patchCord5(oscTwoA, 0, voiceMixerA, 1);
-AudioConnection          patchCord6(oscTwoB, 0, voiceMixerB, 1);
-AudioConnection          patchCord7(oscTwoC, 0, voiceMixerC, 1);
-AudioConnection          patchCord8(oscTwoD, 0, voiceMixerD, 1);
-AudioConnection          patchCord9(oscThreeA, 0, voiceMixerA, 2);
-AudioConnection          patchCord10(oscThreeB, 0, voiceMixerB, 2);
-AudioConnection          patchCord11(oscThreeC, 0, voiceMixerC, 2);
-AudioConnection          patchCord12(oscThreeD, 0, voiceMixerD, 2);
-AudioConnection          patchCord13(noiseWhite, 0, voiceMixerA, 3);
-AudioConnection          patchCord14(noiseWhite, 0, voiceMixerB, 3);
-AudioConnection          patchCord15(noiseWhite, 0, voiceMixerC, 3);
-AudioConnection          patchCord16(noiseWhite, 0, voiceMixerD, 3);
+/* Osc connections */
+AudioConnection          patchCord0(oscOneA,     0, voiceMixerA, 0);
+AudioConnection          patchCord1(oscOneB,     0, voiceMixerB, 0);
+AudioConnection          patchCord2(oscOneC,     0, voiceMixerC, 0);
+AudioConnection          patchCord3(oscOneD,     0, voiceMixerD, 0);
+AudioConnection          patchCord4(oscTwoA,     0, voiceMixerA, 1);
+AudioConnection          patchCord5(oscTwoB,     0, voiceMixerB, 1);
+AudioConnection          patchCord6(oscTwoC,     0, voiceMixerC, 1);
+AudioConnection          patchCord7(oscTwoD,     0, voiceMixerD, 1);
+AudioConnection          patchCord8(oscThreeA,   0, voiceMixerA, 2);
+AudioConnection          patchCord9(oscThreeB,   0, voiceMixerB, 2);
+AudioConnection          patchCord10(oscThreeC,  0, voiceMixerC, 2);
+AudioConnection          patchCord11(oscThreeD,  0, voiceMixerD, 2);
+AudioConnection          patchCord12(noiseWhite, 0, voiceMixerA, 3);
+AudioConnection          patchCord13(noiseWhite, 0, voiceMixerB, 3);
+AudioConnection          patchCord14(noiseWhite, 0, voiceMixerC, 3);
+AudioConnection          patchCord15(noiseWhite, 0, voiceMixerD, 3);
 
-AudioConnection          patchCord133(lfo1, 0, pitchModMixerA, 1);
-AudioConnection          patchCord134(lfo1, 0, pitchModMixerB, 1);
-AudioConnection          patchCord135(lfo1, 0, pitchModMixerC, 1);
-AudioConnection          patchCord136(lfo1, 0, pitchModMixerD, 1);
+AudioConnection          patchCord133(pitchEnvA, 0, pitchModMixerA, 0);
+AudioConnection          patchCord134(pitchEnvB, 0, pitchModMixerB, 0);
+AudioConnection          patchCord135(pitchEnvC, 0, pitchModMixerC, 0);
+AudioConnection          patchCord136(pitchEnvD, 0, pitchModMixerD, 0);
+AudioConnection          patchCord163(lfo1,      0, pitchModMixerA, 1);
+AudioConnection          patchCord164(lfo1,      0, pitchModMixerB, 1);
+AudioConnection          patchCord165(lfo1,      0, pitchModMixerC, 1);
+AudioConnection          patchCord166(lfo1,      0, pitchModMixerD, 1);
 
 AudioConnection          patchCord101(pitchModMixerA, 0, oscOneA, 0);
 AudioConnection          patchCord102(pitchModMixerB, 0, oscOneB, 0);
@@ -119,19 +129,23 @@ AudioConnection          patchCord26(filterB, 0, ampEnvB, 0);
 AudioConnection          patchCord27(filterC, 0, ampEnvC, 0);
 AudioConnection          patchCord28(filterD, 0, ampEnvD, 0);
 
-AudioConnection          patchCord129(dcOneVolt, 0, filterEnvA, 0);
-AudioConnection          patchCord130(dcOneVolt, 0, filterEnvB, 0);
-AudioConnection          patchCord131(dcOneVolt, 0, filterEnvC, 0);
-AudioConnection          patchCord132(dcOneVolt, 0, filterEnvD, 0);
+AudioConnection          patchCord139(dcOneVolt, 0, filterEnvA, 0);
+AudioConnection          patchCord140(dcOneVolt, 0, filterEnvB, 0);
+AudioConnection          patchCord141(dcOneVolt, 0, filterEnvC, 0);
+AudioConnection          patchCord142(dcOneVolt, 0, filterEnvD, 0);
+AudioConnection          patchCord169(dcOneVolt, 0, pitchEnvA, 0);
+AudioConnection          patchCord170(dcOneVolt, 0, pitchEnvB, 0);
+AudioConnection          patchCord171(dcOneVolt, 0, pitchEnvC, 0);
+AudioConnection          patchCord172(dcOneVolt, 0, pitchEnvD, 0);
 
 AudioConnection          patchCord29(filterEnvA, 0, filterModMixerA, 0);
 AudioConnection          patchCord30(filterEnvB, 0, filterModMixerB, 0);
 AudioConnection          patchCord31(filterEnvC, 0, filterModMixerC, 0);
 AudioConnection          patchCord32(filterEnvD, 0, filterModMixerD, 0);
-AudioConnection          patchCord33(lfo2, 0, filterModMixerA, 1);
-AudioConnection          patchCord34(lfo2, 0, filterModMixerB, 1);
-AudioConnection          patchCord35(lfo2, 0, filterModMixerC, 1);
-AudioConnection          patchCord36(lfo2, 0, filterModMixerD, 1);
+AudioConnection          patchCord33(lfo2,       0, filterModMixerA, 1);
+AudioConnection          patchCord34(lfo2,       0, filterModMixerB, 1);
+AudioConnection          patchCord35(lfo2,       0, filterModMixerC, 1);
+AudioConnection          patchCord36(lfo2,       0, filterModMixerD, 1);
 AudioConnection          patchCord37(filterModMixerA, 0, filterA, 1);
 AudioConnection          patchCord38(filterModMixerB, 0, filterB, 1);
 AudioConnection          patchCord39(filterModMixerC, 0, filterC, 1);
@@ -146,23 +160,23 @@ AudioConnection          patchCord45(ampEnvA, 0, peakA, 0);
 AudioConnection          patchCord46(ampEnvB, 0, peakB, 0);
 AudioConnection          patchCord47(ampEnvC, 0, peakC, 0);
 AudioConnection          patchCord48(ampEnvD, 0, peakD, 0);
-AudioConnection          patchCord49(polyMixer, finalPeak);
+AudioConnection          patchCord49(polyMixer, 0, finalPeak, 0);
 
-AudioConnection          patchCord50(polyMixer, 0, delayFbMixer, 0);
-AudioConnection          patchCord51(delayFbMixer, 0, delayFilter1, 0);
-AudioConnection          patchCord52(delayFilter1, 0, delay1, 0);
-AudioConnection          patchCord53(delay1, 0, delayFbMixer, 1);
+AudioConnection          patchCord50(polyMixer,    0, delayFbMixer, 0);
+AudioConnection          patchCord51(delayFbMixer, 0, delayFilter, 0);
+AudioConnection          patchCord52(delayFilter,  OUTPUT_LOWPASS, delay1, 0);
+AudioConnection          patchCord53(delay1,       0, delayFbMixer, 1);
 
 AudioConnection          patchCord54(polyMixer, 0, delayMixer, 0);
 AudioConnection          patchCord55(delay1, 0, delayMixer, 1);
 
 AudioConnection          patchCord56(delayMixer, 0, reverbInputFilter, 0);
-AudioConnection          patchCord57(reverbInputFilter, 0, freeverbs1, 0);
+AudioConnection          patchCord57(reverbInputFilter, OUTPUT_HIGHPASS, freeverbs, 0);
 AudioConnection          patchCord58(delayMixer, 0, reverbMixerL, 0);
 AudioConnection          patchCord59(delayMixer, 0, reverbMixerR, 0);
 
-AudioConnection          patchCord60(freeverbs1, 0, reverbMixerL, 1);
-AudioConnection          patchCord61(freeverbs1, 1, reverbMixerR, 1);
-AudioConnection          patchCord62(reverbMixerL, 0, i2s1, 0);
-AudioConnection          patchCord63(reverbMixerR, 0, i2s1, 1);
+AudioConnection          patchCord60(freeverbs,   0, reverbMixerL, 1);
+AudioConnection          patchCord61(freeverbs,   1, reverbMixerR, 1);
+AudioConnection          patchCord62(reverbMixerL, 0, i2sOutput, 0);
+AudioConnection          patchCord63(reverbMixerR, 0, i2sOutput, 1);
 // GUItool: end automatically generated code

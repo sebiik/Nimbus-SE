@@ -7,7 +7,7 @@
 #include <Bounce.h>
 #include <Metro.h>
 
-/* Seb additional includes */
+/* Additional includes */
 #include <MIDI.h>
 #include <hd44780.h>
 #include <hd44780ioClass/hd44780_I2Clcd.h>
@@ -58,24 +58,7 @@ void setup() {
   #endif
 
   /* Initialize SD */
-  SPI.setMOSI(7);  // Audio shield has MOSI on pin 7
-  SPI.setSCK(14);  // Audio shield has SCK on pin 14
-  #ifdef DEBUG_MODE
-  Serial.print("Initializing SD card...");
-  #endif
-  if (!SD.begin(SD_CS_PIN)) {
-    #ifdef DEBUG_MODE
-    Serial.println("SD init failed!");
-    #endif
-    lcd.clear();
-    lcd.write("SD init failed!");
-    return;
-  }
-  #ifdef DEBUG_MODE
-  Serial.println("SD card found");
-  #endif
-  lcd.clear();
-  lcd.write("SD card found.");
+  initSD();
 
   /* Initialize ADC */
   // initADC();
@@ -109,9 +92,9 @@ void setup() {
   setSynthParam(CC_OSC1_OCTAVE, 1);
   setSynthParam(CC_OSC2_OCTAVE, 1);
   setSynthParam(CC_OSC3_OCTAVE, 1);
-  setSynthParam(CC_LFO1_PITCH_DEPTH, 31);
+  setSynthParam(CC_LFO1_PITCH_DEPTH, 0);
 
-  setSynthParam(CC_LFO1_SHAPE, 3);
+  setSynthParam(CC_LFO1_SHAPE, 0);
   setSynthParam(CC_LFO1_FREQ, 32);
   setSynthParam(CC_LFO1_, 0);
   setSynthParam(CC_LFO1__, 0);
@@ -137,10 +120,10 @@ void setup() {
   setSynthParam(CC_FILTER_ENV_SUSTAIN, 0);
   setSynthParam(CC_FILTER_ENV_RELEASE, 16);
 
-  setSynthParam(CC_DELAY_TIME, 0);
-  setSynthParam(CC_DELAY_FEEDBACK, 0);
-  setSynthParam(CC_DELAY_TONE, 0);
-  setSynthParam(CC_DELAY_MIX, 0);
+  setSynthParam(CC_DELAY_TIME, 127);
+  setSynthParam(CC_DELAY_FEEDBACK, 127);
+  setSynthParam(CC_DELAY_TONE, 63);
+  setSynthParam(CC_DELAY_MIX, 63);
 
   setSynthParam(CC_REVERB_ROOMSIZE, 0);
   setSynthParam(CC_REVERB_DAMPING, 0);
@@ -324,7 +307,7 @@ void loop() {
   pitchModMixerD.gain(1, lfo1PitchDepth);
 
 
-  // Voice peak analyzers
+  /* Voice peak analyzers */
   if (peakA.available()) {
     voiceAPeak = peakA.read();
     ampArray[0] = voiceAPeak;
@@ -341,16 +324,32 @@ void loop() {
     voiceDPeak = peakD.read();
     ampArray[3] = voiceDPeak;
   }
-  // Final peak analyzer
+  /* Final peak analyzer */
   if (finalPeak.available()) {
     finalAmp = finalPeak.read();
   }
-
 }
 
 /* Init SD function */
 void initSD(void) {
-
+  SPI.setMOSI(7);  // Audio shield has MOSI on pin 7
+  SPI.setSCK(14);  // Audio shield has SCK on pin 14
+  #ifdef DEBUG_MODE
+  Serial.print("Initializing SD card...");
+  #endif
+  if (!SD.begin(SD_CS_PIN)) {
+    #ifdef DEBUG_MODE
+    Serial.println("SD init failed!");
+    #endif
+    lcd.clear();
+    lcd.write("SD init failed!");
+    return;
+  }
+  #ifdef DEBUG_MODE
+  Serial.println("SD card found");
+  #endif
+  lcd.clear();
+  lcd.write("SD card found.");
 }
 
 /* ADC, button read functions */
@@ -438,7 +437,7 @@ void OnProgramChange(uint8_t channel, uint8_t value) {
 
 /* Note functions */
 void startVoice(float frequency, float velocity) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < NUM_VOICES; i++) {
     if (!voices[i]) {
       voices[i] = frequency;
       voiceFreqs[i] = frequency;
@@ -451,7 +450,7 @@ void startVoice(float frequency, float velocity) {
 
   voiceNum = lowestAmp();
   //if voice is already in use scan to next voice
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < NUM_VOICES; i++) {
     if (voices[voiceNum]) {
       voiceNum++;
       if (voiceNum > 3) {
@@ -467,7 +466,7 @@ void startVoice(float frequency, float velocity) {
 }
 
 void endVoice(float frequency) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < NUM_VOICES; i++) {
     if(voiceFreqs[i] == frequency) {
       voices[i] = 0;
     }
@@ -476,7 +475,7 @@ void endVoice(float frequency) {
 
 int lowestAmp(void) {
   int index = 0;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < NUM_VOICES; i++) {
     if (ampArray[i] < ampArray[index]) {
       index = i;
     }
@@ -542,7 +541,7 @@ void savePreset(uint8_t number) {
 }
 
 
-/* Voice edit functions */
+/* Voice edit functions */ // TODO PWM
 void setOsc1Shape(uint8_t wave) {
   wave %= NUM_WAVEFORMS;
   switch(wave) {
@@ -577,7 +576,7 @@ void setOsc1Shape(uint8_t wave) {
   }
 }
 
-void setOsc2Shape(uint8_t wave) { // TODO PWM
+void setOsc2Shape(uint8_t wave) {
   wave %= NUM_WAVEFORMS;
   switch(wave) {
     case 0:
@@ -826,7 +825,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_AMP_ENV_ATTACK: {
-      float att = sq(valueNorm) * 11879 +1;
+      float att = sq(valueNorm) * 11879.9 + 0.1;
       ampEnvA.attack(att);
       ampEnvB.attack(att);
       ampEnvC.attack(att);
@@ -835,7 +834,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_AMP_ENV_DECAY: {
-      float dec = sq(valueNorm) * 11879 +1;
+      float dec = sq(valueNorm) * 11879.9 + 0.1;
       ampEnvA.decay(dec);
       ampEnvB.decay(dec);
       ampEnvC.decay(dec);
@@ -852,7 +851,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_AMP_ENV_RELEASE: {
-      float rel = sq(valueNorm) * 11879 +1;
+      float rel = sq(valueNorm) * 11879.9 + 0.1;
       ampEnvA.release(rel);
       ampEnvB.release(rel);
       ampEnvC.release(rel);
@@ -861,7 +860,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_FILTER_ENV_ATTACK: {
-      float att = sq(valueNorm) * 11879 +1;
+      float att = sq(valueNorm) * 11879.9 + 0.1;
       filterEnvA.attack(att);
       filterEnvB.attack(att);
       filterEnvC.attack(att);
@@ -870,7 +869,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_FILTER_ENV_DECAY: {
-      float dec = sq(valueNorm) * 11879 +1;
+      float dec = sq(valueNorm) * 11879.9 + 0.1;
       filterEnvA.decay(dec);
       filterEnvB.decay(dec);
       filterEnvC.decay(dec);
@@ -887,7 +886,7 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_FILTER_ENV_RELEASE: {
-      float rel = sq(valueNorm) * 11879 +1;
+      float rel = sq(valueNorm) * 11879.9 + 0.1;
       filterEnvA.release(rel);
       filterEnvB.release(rel);
       filterEnvC.release(rel);
@@ -906,7 +905,8 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_DELAY_TONE: {
-      delayFilter1.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
+      delayFilter.frequency(80 + sq(valueNorm) * 10000);
+      // delayFilter.setLowpass(1, 80 + sq(valueNorm) * 10000, 1.0); // TODO setBandpass etc.
       break;
     }
 
@@ -916,17 +916,18 @@ void setSynthParam(uint8_t number, uint8_t value) {
     }
 
     case CC_REVERB_ROOMSIZE: {
-      freeverbs1.roomsize(valueNorm); // Reverb size
+      freeverbs.roomsize(valueNorm); // Reverb size
       break;
     }
 
     case CC_REVERB_DAMPING: {
-      freeverbs1.damping(valueNorm); // Reverb damping
+      freeverbs.damping(valueNorm); // Reverb damping
       break;
     }
 
     case CC_REVERB_INPUTFILTER: {
-      reverbInputFilter.setHighpass(0, 20 + sq(valueNorm)*3000, 0.7);
+      reverbInputFilter.frequency(20 + sq(valueNorm)*3000);
+      // reverbInputFilter.setHighpass(0, 20 + sq(valueNorm)*3000, 0.7);
       break;
     }
 

@@ -17,7 +17,7 @@ oscThreeB.amplitude(.25);
 oscThreeC.amplitude(.25);
 oscThreeD.amplitude(.25);
 
-oscOneA.frequencyModulation(6);
+oscOneA.frequencyModulation(6); // == octaveControl for pitch mod
 oscOneB.frequencyModulation(6);
 oscOneC.frequencyModulation(6);
 oscOneD.frequencyModulation(6);
@@ -40,6 +40,10 @@ filterEnvA.releaseNoteOn(1);
 filterEnvB.releaseNoteOn(1);
 filterEnvC.releaseNoteOn(1);
 filterEnvD.releaseNoteOn(1);
+pitchEnvA.releaseNoteOn(1);
+pitchEnvB.releaseNoteOn(1);
+pitchEnvC.releaseNoteOn(1);
+pitchEnvD.releaseNoteOn(1);
 
 dcOneVolt.amplitude(1);
 
@@ -48,12 +52,12 @@ filterB.octaveControl(6);
 filterC.octaveControl(6);
 filterD.octaveControl(6);
 
-delayFilter1.setHighpass(0, 80, 0.7);
+delayFilter.resonance(1.0);
 delayMixer.gain(0, 1);
 delayFbMixer.gain(0, 1);
 reverbMixerL.gain(0, 1);
 reverbMixerR.gain(0, 1);
-reverbInputFilter.setHighpass(0, 80, 0.7); // stage(0-3), frequency, resonance
+reverbInputFilter.resonance(0.7);
 
-lfo1.begin(1,1,WAVEFORM_SINE);
-lfo2.begin(1,1,WAVEFORM_SINE);
+lfo1.amplitude(1);
+lfo2.amplitude(1);

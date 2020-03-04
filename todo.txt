@@ -1,2 +1,4 @@
-- ADSR ENV
+- Hardware control surface
 - Shift button (+ pot movement)?
+- LCD menu
+- paramLocks
